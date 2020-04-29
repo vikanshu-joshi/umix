@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:umix/screens/create_new_account.dart';
+import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/sign_in_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
 
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.route: (ctx) => SplashScreen(),
         SignIn.route: (ctx) => SignIn(),
-        CreateAccount.route: (ctx) => CreateAccount()
+        CreateAccount.route: (ctx) => CreateAccount(),
+        MainScreen.route: (ctx) => MainScreen()
       },
     );
   }

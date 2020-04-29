@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/screens/create_new_account.dart';
+import 'package:umix/screens/main_screen.dart';
+import 'package:umix/screens/splash_screen.dart';
 
 class SignIn extends StatefulWidget {
   static const route = 'sign in';
@@ -11,11 +14,11 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  FirebaseUser currentUser;
-  FirebaseAuth mAuth;
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   bool _showPassword = false;
+  ProgressDialog _progressDialog;
+
 
   void _passwordVisibleStateChnaged(bool _newState) {
     setState(() {
@@ -30,11 +33,7 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    mAuth = FirebaseAuth.instance;
-  }
+  
 
   Widget portraitLayout(MediaQueryData mediaQuery,BuildContext context) {
     return SingleChildScrollView(
@@ -226,7 +225,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void showAlertError(String error) {
+  void showAlertError(String error,BuildContext context) {
     showDialog(
         context: context,
         builder: (_) {
@@ -254,28 +253,33 @@ class _SignInState extends State<SignIn> {
         });
   }
 
-  void logIn(String email, String pass) async {
+  void logIn(String email, String pass,BuildContext context) async {
+    _progressDialog.show();
     try {
       AuthResult result =
-          await mAuth.signInWithEmailAndPassword(email: email, password: pass);
-      currentUser = result.user;
+          await SplashScreen.mAuth.signInWithEmailAndPassword(email: email, password: pass);
+      SplashScreen.mUser = result.user;
+      _progressDialog.hide();
+      Navigator.of(context).pushReplacementNamed(MainScreen.route);
     } catch (error) {
       if (Device.get().isAndroid) {
-        showAlertError(error.message);
+        await _progressDialog.hide();
+        showAlertError(error.message,context);
       } else if (Device.get().isIos) {
-        showAlertError(error.code);
+        await _progressDialog.hide();
+        showAlertError(error.code,context);
       }
     }
   }
 
   void _signInPressed(BuildContext context) {
     if (_email.text.isEmpty) {
-      showAlertError('Email Field Empty');
+      showAlertError('Email Field Empty',context);
     } else if (_password.text.isEmpty) {
-      showAlertError('Password Field Empty');
+      showAlertError('Password Field Empty',context);
     }
     else {
-      logIn(_email.text, _password.text);
+      logIn(_email.text, _password.text,context);
     }
   }
 
@@ -285,6 +289,17 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    _progressDialog = ProgressDialog(context,
+        isDismissible: true, type: ProgressDialogType.Normal);
+    _progressDialog.style(
+      progressWidget: Container(
+        padding: const EdgeInsets.all(15.0),
+        child: CircularProgressIndicator(),
+      ),
+      elevation: 2,
+      message: 'Please Wait.....',
+      borderRadius: 5,
+    );
     var mediaQuery = MediaQuery.of(context);
     var _body = OrientationBuilder(
       builder: (ctx, orientation) {
