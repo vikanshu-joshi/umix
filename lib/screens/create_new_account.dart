@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/models/values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:umix/widgets/common_widgets.dart';
 
@@ -79,7 +78,7 @@ class _CreateAccountState extends State<CreateAccount> {
         Device.get().isIos
             ? Navigator.of(context).pop()
             : await _progressDialog.hide();
-        Navigator.of(context).pushReplacementNamed(MainScreen.route);
+        Navigator.of(context).pushReplacementNamed(SplashScreen.route);
       } catch (error) {
         Device.get().isIos
             ? Navigator.of(context).pop()
@@ -116,6 +115,8 @@ class _CreateAccountState extends State<CreateAccount> {
             });
           });
   }
+
+  
 
   Widget getLayout(BuildContext context) {
     return SingleChildScrollView(
@@ -209,9 +210,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     value: Gender.Other,
                     groupValue: _userGender,
                     onChanged: (gender) {
-                      setState(() {
-                        _userGender = gender;
-                      });
+                      getDOB(context);
                     }),
                 Text('Other'),
                 Radio(

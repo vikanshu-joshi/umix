@@ -12,9 +12,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'UMIX',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.purple,
         accentColor: Colors.deepPurpleAccent,
-        primaryColor: Colors.deepPurple,
+        primaryColor: Colors.purple,
       ),
       home: SplashScreen(),
       routes: {

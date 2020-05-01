@@ -139,7 +139,7 @@ class _SignInState extends State<SignIn> {
           await SplashScreen.mAuth.signInWithEmailAndPassword(email: email, password: pass);
       SplashScreen.mUser = result.user;
       _progressDialog.hide();
-      Navigator.of(context).pushReplacementNamed(MainScreen.route);
+      Navigator.of(context).pushReplacementNamed(SplashScreen.route);
     } catch (error) {
       if (Device.get().isAndroid) {
         await _progressDialog.hide();
