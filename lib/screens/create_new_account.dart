@@ -9,6 +9,7 @@ import 'package:umix/models/values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
+import 'package:umix/widgets/common_widgets.dart';
 
 class CreateAccount extends StatefulWidget {
   static const route = 'create';
@@ -30,34 +31,6 @@ class _CreateAccountState extends State<CreateAccount> {
     setState(() {
       _passwordShow = !_passwordShow;
     });
-  }
-
-  void showAlertError(String error, BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) {
-          return Device.get().isIos
-              ? CupertinoAlertDialog(
-                  title: Text('Error'),
-                  content: Text(error),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      child: Text('OK'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                )
-              : AlertDialog(
-                  title: Text('Error'),
-                  content: Text(error),
-                  elevation: 5.0,
-                  actions: <Widget>[
-                    FlatButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text('OK'))
-                  ],
-                );
-        });
   }
 
   void createAccount(BuildContext context) async {
@@ -143,20 +116,6 @@ class _CreateAccountState extends State<CreateAccount> {
           });
   }
 
-  Widget getAppBar() {
-    return Device.get().isIos
-        ? CupertinoNavigationBar(
-            middle: Text('Create New Account'),
-            trailing: IconButton(
-              icon: Icon(
-                _passwordShow ? CupertinoIcons.eye : CupertinoIcons.eye_solid,
-              ),
-              onPressed: changePassState,
-            ))
-        : AppBar(
-            title: Text('Create New Account'),
-          );
-  }
 
   Widget getLayout(BuildContext context) {
     return SingleChildScrollView(
@@ -325,7 +284,13 @@ class _CreateAccountState extends State<CreateAccount> {
       borderRadius: 5,
     );
     return Scaffold(
-      appBar: getAppBar(),
+      appBar: Device.get().isIos
+        ? CupertinoNavigationBar(
+            middle: Text('Create New Account'),
+            )
+        : AppBar(
+            title: Text('Create New Account'),
+          ),
       backgroundColor: Colors.white,
       body: getLayout(context),
     );

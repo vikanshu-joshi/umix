@@ -6,6 +6,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/screens/create_new_account.dart';
 import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
+import 'package:umix/widgets/common_widgets.dart';
 
 class SignIn extends StatefulWidget {
   static const route = 'sign in';
@@ -35,7 +36,7 @@ class _SignInState extends State<SignIn> {
 
   
 
-  Widget portraitLayout(MediaQueryData mediaQuery,BuildContext context) {
+  Widget getLayout(MediaQueryData mediaQuery,BuildContext context) {
     return SingleChildScrollView(
       padding: mediaQuery.size.width >= mediaQuery.size.height
           ? EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20)
@@ -129,129 +130,7 @@ class _SignInState extends State<SignIn> {
         ],
       ),
     );
-  }
-
-  Widget landscapeLayout(MediaQueryData mediaQuery,BuildContext context) {
-    return SingleChildScrollView(
-      padding: mediaQuery.size.width >= mediaQuery.size.height
-          ? EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20)
-          : EdgeInsets.all(20),
-      child: Column(
-        children: <Widget>[
-          Form(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Device.get().isIos
-                      ? CupertinoTextField(
-                          controller: _email,
-                          placeholder: 'Email',
-                          autofocus: false,
-                          enableInteractiveSelection: true,
-                          clearButtonMode: OverlayVisibilityMode.editing,
-                          keyboardType: TextInputType.emailAddress,
-                          cursorColor: Theme.of(context).primaryColor,
-                        )
-                      : TextFormField(
-                          controller: _email,
-                          autofocus: false,
-                          decoration: InputDecoration(hintText: 'Email'),
-                          cursorColor: Theme.of(context).primaryColor,
-                        ),
-                ),
-                Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Device.get().isIos
-                        ? CupertinoTextField(
-                            controller: _password,
-                            autofocus: false,
-                            placeholder: 'Password',
-                            enableInteractiveSelection: true,
-                            clearButtonMode: OverlayVisibilityMode.editing,
-                            obscureText: true,
-                            cursorColor: Theme.of(context).primaryColor,
-                          )
-                        : TextFormField(
-                            controller: _password,
-                            autofocus: false,
-                            obscureText: !_showPassword,
-                            decoration: InputDecoration(hintText: 'Password'),
-                          ))
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            child: Container(
-              margin: EdgeInsets.only(top: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text('***'),
-                      Switch.adaptive(
-                          value: _showPassword,
-                          onChanged: (newValue) {
-                            _passwordVisibleStateChnaged(newValue);
-                          }),
-                      Text('ABC')
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () => createNewAccount(context),
-                    child: Text(
-                      'Create New Account',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () => _signInPressed(context),
-                    child: Text(
-                      'Sign In',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showAlertError(String error,BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) {
-          return Device.get().isIos
-              ? CupertinoAlertDialog(
-                  title: Text('Error'),
-                  content: Text(error),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      child: Text('OK'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                )
-              : AlertDialog(
-                  title: Text('Error'),
-                  content: Text(error),
-                  elevation: 5.0,
-                  actions: <Widget>[
-                    FlatButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text('OK'))
-                  ],
-                );
-        });
-  }
+  } 
 
   void logIn(String email, String pass,BuildContext context) async {
     _progressDialog.show();
@@ -301,13 +180,7 @@ class _SignInState extends State<SignIn> {
       borderRadius: 5,
     );
     var mediaQuery = MediaQuery.of(context);
-    var _body = OrientationBuilder(
-      builder: (ctx, orientation) {
-        return orientation == Orientation.portrait
-            ? portraitLayout(mediaQuery,context)
-            : landscapeLayout(mediaQuery,context);
-      },
-    );
+    var _body = getLayout(mediaQuery,context);
     return Device.get().isIos
         ? CupertinoPageScaffold(
             child: _body,
