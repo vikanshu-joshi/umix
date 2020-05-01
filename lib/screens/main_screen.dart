@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:umix/screens/my_profile.dart';
 import 'package:umix/screens/splash_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,11 +20,13 @@ class _MainScreenState extends State<MainScreen> {
   CollectionReference userCollection;
   FirebaseStorage storage;
   PageController _page;
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
+
   Widget getLayout(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context).size;
     return PageView(
+      controller: _page,
       scrollDirection: Axis.horizontal,
+      physics: NeverScrollableScrollPhysics(),
       onPageChanged: (index) {
         setState(() {
           _selectedIndex = index;
@@ -45,18 +48,14 @@ class _MainScreenState extends State<MainScreen> {
           '3',
           style: TextStyle(color: Colors.black),
         )),
-        Center(
-            child: Text(
-          '4',
-          style: TextStyle(color: Colors.black),
-        )),
+        MyProfile(),
       ],
     );
   }
 
   Widget _bottomNavigation() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       decoration: BoxDecoration(
         color: Colors.transparent,
       ),
@@ -90,8 +89,8 @@ class _MainScreenState extends State<MainScreen> {
                   text: Device.get().isTablet ? 'Search' : '',
                 ),
                 GButton(
-                  icon: LineIcons.user,
-                  text: Device.get().isTablet ? 'My Profile' : '',
+                  icon: LineIcons.gear,
+                  text: Device.get().isTablet ? 'Settings' : '',
                 ),
               ],
               selectedIndex: _selectedIndex,
@@ -99,6 +98,8 @@ class _MainScreenState extends State<MainScreen> {
                 setState(() {
                   _selectedIndex = index;
                 });
+                _page.animateToPage(index,
+                    duration: Duration(milliseconds: 800), curve: Curves.ease);
               }),
         ),
       ),
@@ -120,7 +121,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       bottomNavigationBar: _bottomNavigation(),
       backgroundColor: Colors.white,
-      body: SafeArea(child: getLayout(context)),
+      body: getLayout(context),
     );
   }
 }

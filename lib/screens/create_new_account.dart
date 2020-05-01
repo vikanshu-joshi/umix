@@ -68,7 +68,8 @@ class _CreateAccountState extends State<CreateAccount> {
             ? 'Other'
             : _userGender == Gender.Male ? 'Male' : 'Female',
         'email': _email.text.trim(),
-        'uid': SplashScreen.mUser.uid
+        'uid': SplashScreen.mUser.uid,
+        'image': 'default'
       };
       SplashScreen.userRef = Firestore.instance.collection('users');
       try {
@@ -115,7 +116,6 @@ class _CreateAccountState extends State<CreateAccount> {
             });
           });
   }
-
 
   Widget getLayout(BuildContext context) {
     return SingleChildScrollView(
@@ -285,12 +285,12 @@ class _CreateAccountState extends State<CreateAccount> {
     );
     return Scaffold(
       appBar: Device.get().isIos
-        ? CupertinoNavigationBar(
-            middle: Text('Create New Account'),
+          ? CupertinoNavigationBar(
+              middle: Text('Create New Account'),
             )
-        : AppBar(
-            title: Text('Create New Account'),
-          ),
+          : AppBar(
+              title: Text('Create New Account'),
+            ),
       backgroundColor: Colors.white,
       body: getLayout(context),
     );
