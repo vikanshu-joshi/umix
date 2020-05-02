@@ -6,12 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/sign_in_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:umix/models/user.dart';
 
 class SplashScreen extends StatelessWidget {
   static const route = 'splash';
   static FirebaseUser mUser;
   static FirebaseAuth mAuth = FirebaseAuth.instance;
   static CollectionReference userRef = Firestore.instance.collection('users');
+  static User myProfile;
 
   void move(BuildContext context, String route) {
     Future.delayed(Duration(milliseconds: 1000)).then((onValue) {
@@ -31,8 +33,18 @@ class SplashScreen extends StatelessWidget {
         _prefs.setString('dob', data['dob']);
         _prefs.setString('gender', data['gender']);
         _prefs.setString('image', data['image']);
-        _prefs.setString('uid',data['uid']);
-      }).catchError((error) {});
+        _prefs.setString('uid', data['uid']);
+        myProfile = User(data['name'], data['email'], data['dob'],
+            data['gender'], data['image'], data['uid']);
+      }).catchError((error) {
+        myProfile = User(
+            _prefs.getString('name'),
+            _prefs.getString('email'),
+            _prefs.getString('dob'),
+            _prefs.getString('gender'),
+            _prefs.getString('image'),
+            mUser.uid);
+      });
     }
     return true;
   }

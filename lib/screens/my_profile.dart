@@ -16,34 +16,23 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  SharedPreferences _prefs;
   ProgressDialog _progressDialog;
   DateFormat dateFormat = DateFormat.yMMMMd();
-  List<String> _myProfileData = [
-    'Batman',
-    'bruce.wayne@wayne.enterprises.com',
-    '',
-    'default',
-  ];
-  String imageUri = 'default';
-
-  Future<bool> getMyProfile() async {
-    _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _myProfileData[0] = _prefs.getString('name');
-      _myProfileData[1] = _prefs.getString('email');
-      _myProfileData[2] = _prefs.getString('dob');
-      _myProfileData[3] = _prefs.getString('gender');
-      imageUri = _prefs.getString('image');
-    });
-    return true;
-  }
 
   @override
   void initState() {
-    _myProfileData[2] = dateFormat.format(DateTime.now());
-    getMyProfile();
+    SplashScreen.mUser.reload();
     super.initState();
+  }
+
+  void verifyEmail(BuildContext context) {
+    SplashScreen.mUser.sendEmailVerification().then((_) {
+      showAlertError(
+          'Email verification link sent to ${SplashScreen.myProfile.email}',
+          context);
+    }).catchError((error) {
+      showAlertError(error.message, context);
+    });
   }
 
   void changeDate(BuildContext context) async {
@@ -60,7 +49,7 @@ class _MyProfileState extends State<MyProfile> {
                   .then((_) {
                 _progressDialog.hide();
                 setState(() {
-                  _myProfileData[2] = dateFormat.format(_date);
+                  SplashScreen.myProfile.dob = dateFormat.format(_date);
                 });
               }).catchError((error) {
                 _progressDialog.hide();
@@ -82,7 +71,7 @@ class _MyProfileState extends State<MyProfile> {
                 .then((_) {
               _progressDialog.hide();
               setState(() {
-                _myProfileData[2] = dateFormat.format(_date);
+                SplashScreen.myProfile.dob = dateFormat.format(_date);
               });
             }).catchError((error) {
               _progressDialog.hide();
@@ -104,14 +93,15 @@ class _MyProfileState extends State<MyProfile> {
     });
   }
 
-  void manageEdit(int index, BuildContext context) {
-    if (index == 2) {
-      changeDate(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    if (!SplashScreen.mUser.isEmailVerified) {
+      SplashScreen.mAuth.currentUser().then((_user) {
+        setState(() {
+          SplashScreen.mUser = _user;
+        });
+      });
+    }
     var mediaQuery = MediaQuery.of(context).size;
     _progressDialog = ProgressDialog(context,
         isDismissible: true, type: ProgressDialogType.Normal);
@@ -142,19 +132,19 @@ class _MyProfileState extends State<MyProfile> {
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(
-                  _myProfileData[0],
+                  SplashScreen.myProfile.name,
                   style: TextStyle(fontFamily: 'Aclonica', color: Colors.white),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                background: imageUri == 'default'
+                background: SplashScreen.myProfile.image == 'default'
                     ? Image.asset(
                         'assets/images/default.png',
                         fit: BoxFit.cover,
                       )
                     : FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
-                        image: imageUri,
+                        image: SplashScreen.myProfile.image,
                         fit: BoxFit.cover,
                       ),
               ),
@@ -163,28 +153,99 @@ class _MyProfileState extends State<MyProfile> {
         },
         body: Container(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(top: 50),
+                child: GestureDetector(
+                  onTap: () => verifyEmail(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        SplashScreen.mUser.isEmailVerified
+                            ? 'You are a verified user'
+                            : 'You need to verify email',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(left: 10),
+                        child: Icon(
+                          SplashScreen.mUser.isEmailVerified
+                              ? Icons.thumb_up
+                              : Icons.error,
+                          color: SplashScreen.mUser.isEmailVerified
+                              ? Colors.green
+                              : Colors.red,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
               Flexible(
                   fit: FlexFit.tight,
-                  child: ListView.builder(
-                      itemCount: _myProfileData.length,
-                      itemBuilder: (ctx, index) {
-                        return ListTile(
-                          title: Text(
-                            _myProfileData[index],
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: IconButton(
-                              icon: Icon(
-                                Icons.edit,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              onPressed: () {
-                                manageEdit(index, context);
-                              }),
-                        );
-                      })),
+                  child: ListView(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text(
+                          SplashScreen.myProfile.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              changeName(context);
+                            }),
+                      ),
+                      ListTile(
+                        title: Text(
+                          SplashScreen.myProfile.email,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              changeEmail(context);
+                            }),
+                      ),
+                      ListTile(
+                        title: Text(
+                          SplashScreen.myProfile.dob,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              changeDate(context);
+                            }),
+                      ),
+                      ListTile(
+                        title: Text(
+                          SplashScreen.myProfile.gender,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              changeGender(context);
+                            }),
+                      ),
+                    ],
+                  )),
               Container(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.width * 0.05,
