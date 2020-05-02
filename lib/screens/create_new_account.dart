@@ -32,6 +32,14 @@ class _CreateAccountState extends State<CreateAccount> {
     });
   }
 
+  @override
+  void dispose() {
+    _email.dispose();
+    _pass.dispose();
+    _name.dispose();
+    super.dispose();
+  }
+
   void createAccount(BuildContext context) async {
     if (_name.text.trim().isEmpty) {
       showAlertError('Name field empty', context);

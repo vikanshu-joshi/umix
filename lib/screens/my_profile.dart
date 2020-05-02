@@ -17,6 +17,7 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   ProgressDialog _progressDialog;
   DateFormat dateFormat = DateFormat.yMMMMd();
+  TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
@@ -24,33 +25,41 @@ class _MyProfileState extends State<MyProfile> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
   void verifyEmail(BuildContext context) {
     SplashScreen.mUser.sendEmailVerification().then((_) {
       showDialog(
-        context: context,
-        builder: (_) {
-          return Device.get().isIos
-              ? CupertinoAlertDialog(
-                  title: Text("It's Done"),
-                  content: Text('Email verification link sent to ${SplashScreen.myProfile.email}'),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      child: Text('OK'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                )
-              : AlertDialog(
-                  title: Text("It's Done"),
-                  content: Text('Email verification link sent to ${SplashScreen.myProfile.email}'),
-                  elevation: 5.0,
-                  actions: <Widget>[
-                    FlatButton(
+          context: context,
+          builder: (_) {
+            return Device.get().isIos
+                ? CupertinoAlertDialog(
+                    title: Text("It's Done"),
+                    content: Text(
+                        'Email verification link sent to ${SplashScreen.myProfile.email}'),
+                    actions: <Widget>[
+                      CupertinoDialogAction(
+                        child: Text('OK'),
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text('OK'))
-                  ],
-                );
-        });
+                      )
+                    ],
+                  )
+                : AlertDialog(
+                    title: Text("It's Done"),
+                    content: Text(
+                        'Email verification link sent to ${SplashScreen.myProfile.email}'),
+                    elevation: 5.0,
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('OK'))
+                    ],
+                  );
+          });
     }).catchError((error) {
       showAlertError(error.message, context);
     });
@@ -102,61 +111,176 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void changeName(BuildContext context) {
-    TextEditingController _nameController = TextEditingController();
-    showDialog(context: context,builder: (ctx){
-      return Device.get().isIos ? CupertinoAlertDialog(
-        content: Container(
-          child: CupertinoTextField(
-            controller: _nameController,
-            placeholder: 'Enter Your New Name',
-          ),
-        ),
-        actions: <Widget>[
-          CupertinoDialogAction(child: Text('Cancel'),onPressed: () => Navigator.of(context).pop(),),
-          CupertinoDialogAction(child: Text('Ok'),onPressed: () {
-            if(_nameController.text.trim().isNotEmpty){
-              String newName = _nameController.text.trim();
-              _nameController.dispose();
-              uploadName(newName,context);
-            }
-          },),
-        ],
-      ) : AlertDialog(
-
-        content: Container(
-          child: TextField(
-            textCapitalization: TextCapitalization.words,
-            controller: _nameController,
-            decoration: InputDecoration(hintText: 'Enter Your New Name'),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
-          FlatButton(onPressed: () {
-            if(_nameController.text.trim().isNotEmpty){
-              String newName = _nameController.text.trim();
-              _nameController.dispose();
-              uploadName(newName,context);
-            }
-          }, child: Text('Ok')),
-        ],
-      );
-    });
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return Device.get().isIos
+              ? CupertinoAlertDialog(
+                  content: Container(
+                    child: CupertinoTextField(
+                      controller: _nameController,
+                      placeholder: 'Enter Your New Name',
+                    ),
+                  ),
+                  actions: <Widget>[
+                    CupertinoDialogAction(
+                      child: Text('Cancel'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    CupertinoDialogAction(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        if (_nameController.text.trim().isNotEmpty) {
+                          String newName = _nameController.text.trim();
+                          _nameController.dispose();
+                          uploadName(newName, context);
+                        }
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  content: Container(
+                    child: TextField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: _nameController,
+                      decoration:
+                          InputDecoration(hintText: 'Enter Your New Name'),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Cancel')),
+                    FlatButton(
+                        onPressed: () {
+                          if (_nameController.text.trim().isNotEmpty) {
+                            String newName = _nameController.text.trim();
+                            _nameController.dispose();
+                            uploadName(newName, context);
+                          }
+                        },
+                        child: Text('Ok')),
+                  ],
+                );
+        });
   }
 
-  void uploadName(String name,BuildContext context){
+  void uploadName(String name, BuildContext context) {
     Navigator.of(context).pop();
     _progressDialog.show();
-    Map <String,String> data = {'name' : name};
-    SplashScreen.userRef.document(SplashScreen.mUser.uid).updateData(data).then((_){
+    Map<String, String> data = {'name': name};
+    SplashScreen.userRef
+        .document(SplashScreen.mUser.uid)
+        .updateData(data)
+        .then((_) {
       _progressDialog.hide();
       setState(() {
         SplashScreen.myProfile.name = name;
       });
-    });
+    }).catchError((error){
+        _progressDialog.hide();
+        showAlertError(error.message, context);
+      });
   }
 
-  void changeGender(BuildContext context) {}
+  void changeGender(BuildContext context) async {
+    String chosen;
+    if (Device.get().isIos) {
+      chosen = await showCupertinoModalPopup(
+          context: context,
+          builder: (_) {
+            return CupertinoActionSheet(
+              title: Text('Choose a Gender'),
+              actions: <Widget>[
+                CupertinoActionSheetAction(
+                  onPressed: () => Navigator.of(context).pop('Other'),
+                  child: Text('Other'),
+                  isDefaultAction: true,
+                ),
+                CupertinoActionSheetAction(
+                  onPressed: () => Navigator.of(context).pop('Female'),
+                  child: Text('Female'),
+                  isDefaultAction: true,
+                ),
+                CupertinoActionSheetAction(
+                  onPressed: () => Navigator.of(context).pop('Male'),
+                  child: Text('Male'),
+                  isDefaultAction: true,
+                ),
+              ],
+              cancelButton: CupertinoActionSheetAction(
+                onPressed: () => Navigator.of(context).pop('Cancel'),
+                child: Text('Cancel'),
+                isDestructiveAction: true,
+              ),
+            );
+          });
+    } else {
+      chosen = await showModalBottomSheet(
+        isDismissible: false,
+          context: context,
+          builder: (_) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: FlatButton(
+                        onPressed: () => Navigator.of(context).pop('Other'),
+                        child: Text(
+                          'Other',
+                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                        )),
+                  ),
+                  Divider(),
+                  Container(
+                    child: FlatButton(
+                        onPressed: () => Navigator.of(context).pop('Female'),
+                        child: Text(
+                          'Female',
+                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                        )),
+                  ),
+                  Divider(),
+                  Container(
+                    child: FlatButton(
+                        onPressed: () => Navigator.of(context).pop('Male'),
+                        child: Text(
+                          'Male',
+                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                        )),
+                  ),
+                  Divider(),
+                  Container(
+                    child: FlatButton(
+                        onPressed: () => Navigator.of(context).pop('Cancel'),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.red,fontSize: 20),
+                        )),
+                  ),
+                ],
+              ),
+            );
+          });
+    }
+    if(chosen != 'Cancel' && chosen != null){
+      _progressDialog.show();
+      Map<String,String> data = {'gender' : chosen};
+      SplashScreen.userRef.document(SplashScreen.mUser.uid).updateData(data).then((_){
+        _progressDialog.hide();
+        setState(() {
+          SplashScreen.myProfile.gender = chosen;
+        });
+      }).catchError((error){
+        _progressDialog.hide();
+        showAlertError(error.message, context);
+      });
+    }
+  }
 
   void logOut(BuildContext context) {
     SplashScreen.mAuth.signOut().then((_) {
@@ -271,10 +395,12 @@ class _MyProfileState extends State<MyProfile> {
                               color: Theme.of(context).primaryColor,
                             ),
                             onPressed: () {
-                              if(SplashScreen.mUser.isEmailVerified){
+                              if (SplashScreen.mUser.isEmailVerified) {
                                 changeName(context);
-                              }else{
-                                showAlertError('You need to verify email before editing your profile', context);
+                              } else {
+                                showAlertError(
+                                    'You need to verify email before editing your profile',
+                                    context);
                               }
                             }),
                       ),
