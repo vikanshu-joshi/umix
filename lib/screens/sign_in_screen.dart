@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/screens/create_new_account.dart';
-import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:umix/widgets/common_widgets.dart';
 
