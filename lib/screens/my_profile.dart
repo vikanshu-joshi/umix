@@ -97,6 +97,13 @@ class _MyProfileState extends State<MyProfile> {
 
   void changeGender(BuildContext context) {}
 
+  void logOut(BuildContext context) {
+    SplashScreen.mAuth.signOut().then((_) {
+      SplashScreen.mUser = null;
+      Navigator.of(context).pushReplacementNamed(SplashScreen.route);
+    });
+  }
+
   void manageEdit(int index, BuildContext context) {
     if (index == 2) {
       changeDate(context);
@@ -136,7 +143,7 @@ class _MyProfileState extends State<MyProfile> {
                 centerTitle: true,
                 title: Text(
                   _myProfileData[0],
-                  style: TextStyle(fontFamily: 'Aclonica'),
+                  style: TextStyle(fontFamily: 'Aclonica', color: Colors.white),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -156,9 +163,10 @@ class _MyProfileState extends State<MyProfile> {
         },
         body: Container(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Flexible(
-                  fit: FlexFit.loose,
+                  fit: FlexFit.tight,
                   child: ListView.builder(
                       itemCount: _myProfileData.length,
                       itemBuilder: (ctx, index) {
@@ -176,7 +184,31 @@ class _MyProfileState extends State<MyProfile> {
                                 manageEdit(index, context);
                               }),
                         );
-                      }))
+                      })),
+              Container(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.width * 0.05,
+                    top: MediaQuery.of(context).size.width * 0.02),
+                child: Device.get().isIos
+                    ? CupertinoButton(
+                        color: Colors.red,
+                        child: Text(
+                          'LOGOUT',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () => logOut(context))
+                    : FlatButton(
+                        color: Colors.red,
+                        onPressed: () => logOut(context),
+                        child: Text(
+                          'LOGOUT',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )),
+              )
             ],
           ),
         ));

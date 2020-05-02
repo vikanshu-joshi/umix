@@ -63,9 +63,9 @@ class _MainScreenState extends State<MainScreen> {
         child: Container(
           decoration: BoxDecoration(
               boxShadow: [
-                BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.5))
+                BoxShadow(blurRadius: 10, color: Colors.black.withOpacity(.5))
               ],
-              color: Colors.yellowAccent,
+              color: Colors.amber,
               borderRadius: BorderRadius.circular(100)),
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
           child: GNav(

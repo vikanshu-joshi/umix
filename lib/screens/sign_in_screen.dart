@@ -20,7 +20,6 @@ class _SignInState extends State<SignIn> {
   bool _showPassword = false;
   ProgressDialog _progressDialog;
 
-
   void _passwordVisibleStateChnaged(bool _newState) {
     setState(() {
       _showPassword = _newState;
@@ -34,9 +33,7 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  
-
-  Widget getLayout(MediaQueryData mediaQuery,BuildContext context) {
+  Widget getLayout(MediaQueryData mediaQuery, BuildContext context) {
     return SingleChildScrollView(
       padding: mediaQuery.size.width >= mediaQuery.size.height
           ? EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20)
@@ -130,39 +127,40 @@ class _SignInState extends State<SignIn> {
         ],
       ),
     );
-  } 
+  }
 
-  void logIn(String email, String pass,BuildContext context) async {
+  void logIn(String email, String pass, BuildContext context) async {
     _progressDialog.show();
     try {
-      AuthResult result =
-          await SplashScreen.mAuth.signInWithEmailAndPassword(email: email, password: pass);
+      AuthResult result = await SplashScreen.mAuth
+          .signInWithEmailAndPassword(email: email, password: pass);
       SplashScreen.mUser = result.user;
       _progressDialog.hide();
       Navigator.of(context).pushReplacementNamed(SplashScreen.route);
     } catch (error) {
       if (Device.get().isAndroid) {
-        await _progressDialog.hide();
-        showAlertError(error.message,context);
+        _progressDialog.hide().then((_) {
+          showAlertError(error.message, context);
+        });
       } else if (Device.get().isIos) {
-        await _progressDialog.hide();
-        showAlertError(error.code,context);
+        _progressDialog.hide().then((_) {
+          showAlertError(error.code, context);
+        });
       }
     }
   }
 
   void _signInPressed(BuildContext context) {
     if (_email.text.isEmpty) {
-      showAlertError('Email Field Empty',context);
+      showAlertError('Email Field Empty', context);
     } else if (_password.text.isEmpty) {
-      showAlertError('Password Field Empty',context);
-    }
-    else {
-      logIn(_email.text, _password.text,context);
+      showAlertError('Password Field Empty', context);
+    } else {
+      logIn(_email.text, _password.text, context);
     }
   }
 
-  void createNewAccount(BuildContext context){
+  void createNewAccount(BuildContext context) {
     Navigator.of(context).pushReplacementNamed(CreateAccount.route);
   }
 
@@ -180,7 +178,7 @@ class _SignInState extends State<SignIn> {
       borderRadius: 5,
     );
     var mediaQuery = MediaQuery.of(context);
-    var _body = getLayout(mediaQuery,context);
+    var _body = getLayout(mediaQuery, context);
     return Device.get().isIos
         ? CupertinoPageScaffold(
             child: _body,
