@@ -1,7 +1,5 @@
 import 'dart:collection';
 import 'dart:io';
-import 'dart:ui';
-import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -10,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progressive_image/progressive_image.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
-import 'package:umix/main.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -68,9 +65,15 @@ class _NewPostState extends State<NewPost> {
       children: <Widget>[
         Expanded(
             child: Container(
-              padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(2),
+          width: MediaQuery.of(context).size.width,
+          child: ProgressiveImage(
+            fit: BoxFit.contain,
+              placeholder: AssetImage('assets/images/loading.png'),
+              thumbnail: AssetImage('assets/images/loading.png'),
+              image: FileImage(loadedImage),
               width: MediaQuery.of(context).size.width,
-              child: Image.file(loadedImage,fit: BoxFit.contain,),
+              height: MediaQuery.of(context).size.height),
           color: Colors.red.withOpacity(0.5),
         )),
         Padding(

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,6 +14,7 @@ class SplashScreen extends StatelessWidget {
   static FirebaseUser mUser;
   static FirebaseAuth mAuth = FirebaseAuth.instance;
   static CollectionReference userRef = Firestore.instance.collection('users');
+  static StorageReference storageReference = FirebaseStorage.instance.ref();
   static User myProfile;
 
   void move(BuildContext context, String route) {

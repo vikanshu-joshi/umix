@@ -1,9 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:umix/screens/splash_screen.dart';
@@ -31,7 +33,45 @@ class _MyProfileState extends State<MyProfile> {
     super.dispose();
   }
 
+  void changeMyDP(BuildContext context) async {
+    var result = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (result == null) {
+      return;
+    }
+    try {
+      _progressDialog.show();
+      var uploaded = SplashScreen.storageReference
+          .child('profile_images')
+          .child('${SplashScreen.mUser.uid}.jpg');
+      uploaded.putFile(result).onComplete.then((onValue) {
+        onValue.ref.getDownloadURL().then((uri) {
+          Map<String, String> data = {'image': uri.toString()};
+          SplashScreen.userRef
+              .document(SplashScreen.mUser.uid)
+              .updateData(data)
+              .then((_) {
+            _progressDialog.hide();
+            setState(() {
+              SplashScreen.myProfile.image = uri.toString();
+            });
+          }).catchError((error) {
+            _progressDialog.hide();
+            showAlertError(error.message, context);
+          });
+        });
+      }).catchError((error) {
+        _progressDialog.hide();
+        showAlertError(error.message, context);
+      });
+    } catch (error) {
+      showAlertError(error.message, context);
+    }
+  }
+
   void verifyEmail(BuildContext context) {
+    if (SplashScreen.mUser.isEmailVerified) {
+      return;
+    }
     SplashScreen.mUser.sendEmailVerification().then((_) {
       showDialog(
           context: context,
@@ -177,10 +217,10 @@ class _MyProfileState extends State<MyProfile> {
       setState(() {
         SplashScreen.myProfile.name = name;
       });
-    }).catchError((error){
-        _progressDialog.hide();
-        showAlertError(error.message, context);
-      });
+    }).catchError((error) {
+      _progressDialog.hide();
+      showAlertError(error.message, context);
+    });
   }
 
   void changeGender(BuildContext context) async {
@@ -217,7 +257,7 @@ class _MyProfileState extends State<MyProfile> {
           });
     } else {
       chosen = await showModalBottomSheet(
-        isDismissible: false,
+          isDismissible: false,
           context: context,
           builder: (_) {
             return Container(
@@ -231,7 +271,7 @@ class _MyProfileState extends State<MyProfile> {
                         onPressed: () => Navigator.of(context).pop('Other'),
                         child: Text(
                           'Other',
-                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                          style: TextStyle(color: Colors.blue, fontSize: 20),
                         )),
                   ),
                   Divider(),
@@ -240,7 +280,7 @@ class _MyProfileState extends State<MyProfile> {
                         onPressed: () => Navigator.of(context).pop('Female'),
                         child: Text(
                           'Female',
-                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                          style: TextStyle(color: Colors.blue, fontSize: 20),
                         )),
                   ),
                   Divider(),
@@ -249,7 +289,7 @@ class _MyProfileState extends State<MyProfile> {
                         onPressed: () => Navigator.of(context).pop('Male'),
                         child: Text(
                           'Male',
-                          style: TextStyle(color: Colors.blue,fontSize: 20),
+                          style: TextStyle(color: Colors.blue, fontSize: 20),
                         )),
                   ),
                   Divider(),
@@ -258,7 +298,7 @@ class _MyProfileState extends State<MyProfile> {
                         onPressed: () => Navigator.of(context).pop('Cancel'),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.red,fontSize: 20),
+                          style: TextStyle(color: Colors.red, fontSize: 20),
                         )),
                   ),
                 ],
@@ -266,15 +306,18 @@ class _MyProfileState extends State<MyProfile> {
             );
           });
     }
-    if(chosen != 'Cancel' && chosen != null){
+    if (chosen != 'Cancel' && chosen != null) {
       _progressDialog.show();
-      Map<String,String> data = {'gender' : chosen};
-      SplashScreen.userRef.document(SplashScreen.mUser.uid).updateData(data).then((_){
+      Map<String, String> data = {'gender': chosen};
+      SplashScreen.userRef
+          .document(SplashScreen.mUser.uid)
+          .updateData(data)
+          .then((_) {
         _progressDialog.hide();
         setState(() {
           SplashScreen.myProfile.gender = chosen;
         });
-      }).catchError((error){
+      }).catchError((error) {
         _progressDialog.hide();
         showAlertError(error.message, context);
       });
@@ -316,31 +359,42 @@ class _MyProfileState extends State<MyProfile> {
               actions: <Widget>[
                 IconButton(
                     icon: Icon(
-                      LineIcons.picture_o,
+                      Icons.image,
                       color: Colors.white,
                     ),
-                    onPressed: () {})
+                    onPressed: () => changeMyDP(context))
               ],
               expandedHeight: mediaQuery.height * 0.4,
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                title: Text(
-                  SplashScreen.myProfile.name,
-                  style: TextStyle(fontFamily: 'Aclonica', color: Colors.white),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                title: Container(
+                  child: Text(
+                    SplashScreen.myProfile.name,
+                    style:
+                        TextStyle(fontFamily: 'Aclonica', color: Colors.white),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 background: SplashScreen.myProfile.image == 'default'
                     ? Image.asset(
                         'assets/images/default.png',
-                        fit: BoxFit.cover,
                       )
-                    : FadeInImage.memoryNetwork(
-                        placeholder: kTransparentImage,
-                        image: SplashScreen.myProfile.image,
-                        fit: BoxFit.cover,
+                    : Container(
+                      decoration: BoxDecoration(
+
+                        image: DecorationImage(image: NetworkImage(SplashScreen.myProfile.image),fit: BoxFit.fill)
+                      ),
+                      width: mediaQuery.width,
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                          child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: SplashScreen.myProfile.image,
+                              fit: BoxFit.fitHeight),
+                        ),
                       ),
               ),
             )
