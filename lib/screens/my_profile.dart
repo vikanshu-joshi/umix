@@ -384,7 +384,6 @@ class _MyProfileState extends State<MyProfile> {
                       )
                     : Container(
                       decoration: BoxDecoration(
-
                         image: DecorationImage(image: NetworkImage(SplashScreen.myProfile.image),fit: BoxFit.fill)
                       ),
                       width: mediaQuery.width,

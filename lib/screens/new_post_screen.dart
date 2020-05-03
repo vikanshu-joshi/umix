@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progressive_image/progressive_image.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
+import 'package:umix/screens/final_post_upload.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -68,7 +69,7 @@ class _NewPostState extends State<NewPost> {
           padding: const EdgeInsets.all(2),
           width: MediaQuery.of(context).size.width,
           child: ProgressiveImage(
-            fit: BoxFit.contain,
+              fit: BoxFit.contain,
               placeholder: AssetImage('assets/images/loading.png'),
               thumbnail: AssetImage('assets/images/loading.png'),
               image: FileImage(loadedImage),
@@ -78,24 +79,48 @@ class _NewPostState extends State<NewPost> {
         )),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  _captureImage(ImageSource.camera);
-                },
-                child: Text('Open Camera'),
-                color: Theme.of(context).accentColor,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  _captureImage(ImageSource.gallery);
-                },
-                child: Text('Open Gallery'),
-                color: Theme.of(context).accentColor,
-              )
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: RaisedButton(
+                    onPressed: () {
+                      _captureImage(ImageSource.camera);
+                    },
+                    child: Text('Open Camera'),
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          loadedImage = null;
+                          imageCaptured = false;
+                        });
+                      }),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: RaisedButton(
+                    onPressed: () {
+                      _captureImage(ImageSource.gallery);
+                    },
+                    child: Text('Open Gallery'),
+                    color: Theme.of(context).accentColor,
+                  ),
+                )
+              ],
+            ),
           ),
         )
       ],
@@ -112,12 +137,20 @@ class _NewPostState extends State<NewPost> {
     return Device.get().isIos
         ? CupertinoNavigationBar(
             leading: Text('Create New Post'),
-            trailing: FlatButton(onPressed: () {}, child: Text('Next')),
+            trailing: FlatButton(
+                onPressed: () {
+                  nextFinalPostScreen(context);
+                },
+                child: Text('Next')),
           )
         : AppBar(
             title: Text('Create New Post'),
             actions: <Widget>[
-              FlatButton(onPressed: () {}, child: Text('Next')),
+              FlatButton(
+                  onPressed: () {
+                    nextFinalPostScreen(context);
+                  },
+                  child: Text('Next')),
             ],
           );
   }
@@ -131,11 +164,20 @@ class _NewPostState extends State<NewPost> {
     });
   }
 
+  void nextFinalPostScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) {
+          return FinalPostUpload(imageCaptured ? loadedImage : null);
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar(),
       body: PageView(
+        physics: NeverScrollableScrollPhysics(),
         onPageChanged: (index) {
           currentIndex = index;
         },
@@ -145,19 +187,29 @@ class _NewPostState extends State<NewPost> {
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.5),
             itemBuilder: (ctx, index) {
-              return Container(
-                  color: Theme.of(context).accentColor,
-                  child: ProgressiveImage(
-                      placeholder: AssetImage('assets/images/loading.png'),
-                      thumbnail: FileImage(File(imagesList[index])),
-                      image: FileImage(File(imagesList[index])),
-                      width: MediaQuery.of(context).size.width * 0.495,
-                      height: MediaQuery.of(context).size.width * 0.495));
+              return GestureDetector(
+                onTap: () {
+                  loadedImage = File(imagesList[index]);
+                  setState(() {
+                    imageCaptured = true;
+                    _page.animateToPage(1,
+                        duration: Duration(milliseconds: 800),
+                        curve: Curves.ease);
+                  });
+                },
+                child: Container(
+                    color: Theme.of(context).accentColor,
+                    child: ProgressiveImage(
+                        placeholder: AssetImage('assets/images/loading.png'),
+                        thumbnail: FileImage(File(imagesList[index])),
+                        image: FileImage(File(imagesList[index])),
+                        width: MediaQuery.of(context).size.width * 0.495,
+                        height: MediaQuery.of(context).size.width * 0.495)),
+              );
             },
             itemCount: imagesList == null ? 0 : imagesList.length,
           ),
           getCameraPage(),
-          Center(child: Text('Videos')),
         ],
       ),
       bottomNavigationBar: TitledBottomNavigationBar(
@@ -180,11 +232,6 @@ class _NewPostState extends State<NewPost> {
                 icon: Device.get().isIos
                     ? CupertinoIcons.photo_camera
                     : LineIcons.camera),
-            TitledNavigationBarItem(
-                title: Text('Videos'),
-                icon: Device.get().isIos
-                    ? CupertinoIcons.video_camera
-                    : LineIcons.video_camera),
           ]),
     );
   }
