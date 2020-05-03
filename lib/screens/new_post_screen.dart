@@ -1,13 +1,16 @@
 import 'dart:collection';
 import 'dart:io';
-
+import 'dart:ui';
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_gallery/image_gallery.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progressive_image/progressive_image.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
+import 'package:umix/main.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -19,6 +22,82 @@ class _NewPostState extends State<NewPost> {
     initialPage: 1,
   );
   List<String> imagesList;
+  int currentIndex = 1;
+  bool imageCaptured = false;
+  File loadedImage;
+
+  @override
+  void dispose() {
+    _page.dispose();
+    super.dispose();
+  }
+
+  void _captureImage(ImageSource source) async {
+    var result = await ImagePicker.pickImage(source: source);
+    if (result != null) {
+      setState(() {
+        imageCaptured = true;
+        loadedImage = result;
+      });
+    }
+  }
+
+  Widget getCameraPage() {
+    if (!imageCaptured) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          RaisedButton(
+            onPressed: () {
+              _captureImage(ImageSource.camera);
+            },
+            child: Text('Open Camera'),
+            color: Theme.of(context).accentColor,
+          ),
+          RaisedButton(
+            onPressed: () {
+              _captureImage(ImageSource.gallery);
+            },
+            child: Text('Open Gallery'),
+            color: Theme.of(context).accentColor,
+          )
+        ],
+      );
+    }
+    return Column(
+      children: <Widget>[
+        Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              width: MediaQuery.of(context).size.width,
+              child: Image.file(loadedImage,fit: BoxFit.contain,),
+          color: Colors.red.withOpacity(0.5),
+        )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  _captureImage(ImageSource.camera);
+                },
+                child: Text('Open Camera'),
+                color: Theme.of(context).accentColor,
+              ),
+              RaisedButton(
+                onPressed: () {
+                  _captureImage(ImageSource.gallery);
+                },
+                child: Text('Open Gallery'),
+                color: Theme.of(context).accentColor,
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
 
   @override
   void initState() {
@@ -54,6 +133,9 @@ class _NewPostState extends State<NewPost> {
     return Scaffold(
       appBar: getAppBar(),
       body: PageView(
+        onPageChanged: (index) {
+          currentIndex = index;
+        },
         controller: _page,
         children: <Widget>[
           GridView.builder(
@@ -66,18 +148,21 @@ class _NewPostState extends State<NewPost> {
                       placeholder: AssetImage('assets/images/loading.png'),
                       thumbnail: FileImage(File(imagesList[index])),
                       image: FileImage(File(imagesList[index])),
-                      width: MediaQuery.of(context).size.width * 0.499,
-                      height: MediaQuery.of(context).size.width * 0.499));
+                      width: MediaQuery.of(context).size.width * 0.495,
+                      height: MediaQuery.of(context).size.width * 0.495));
             },
             itemCount: imagesList == null ? 0 : imagesList.length,
           ),
-          Center(child: Text('Camera')),
+          getCameraPage(),
           Center(child: Text('Videos')),
         ],
       ),
       bottomNavigationBar: TitledBottomNavigationBar(
+          currentIndex: currentIndex,
+          enableShadow: true,
           activeColor: Colors.red,
           onTap: (index) {
+            currentIndex = index;
             _page.animateToPage(index,
                 duration: Duration(milliseconds: 800), curve: Curves.ease);
           },
