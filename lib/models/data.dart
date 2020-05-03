@@ -9,3 +9,11 @@ class User {
   String uid = '';
   User(this.name,this.email,this.dob,this.gender,this.image,this.uid);
 }
+
+class Post{
+  String caption;
+  bool multiImages;
+  List<String> images;
+  int likes;
+  
+}

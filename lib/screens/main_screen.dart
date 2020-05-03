@@ -7,6 +7,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:umix/screens/my_profile.dart';
+import 'package:umix/screens/new_post_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -38,11 +39,7 @@ class _MainScreenState extends State<MainScreen> {
           '1',
           style: TextStyle(color: Colors.black),
         )),
-        Center(
-            child: Text(
-          '2',
-          style: TextStyle(color: Colors.black),
-        )),
+        NewPost(),
         Center(
             child: Text(
           '3',
@@ -55,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _bottomNavigation() {
     return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20,top: 20),
       decoration: BoxDecoration(
         color: Colors.transparent,
       ),

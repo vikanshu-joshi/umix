@@ -132,7 +132,6 @@ class _MyProfileState extends State<MyProfile> {
                       onPressed: () {
                         if (_nameController.text.trim().isNotEmpty) {
                           String newName = _nameController.text.trim();
-                          _nameController.dispose();
                           uploadName(newName, context);
                         }
                       },

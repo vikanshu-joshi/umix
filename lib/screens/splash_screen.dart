@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/sign_in_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:umix/models/user.dart';
+import 'package:umix/models/data.dart';
 
 class SplashScreen extends StatelessWidget {
   static const route = 'splash';
