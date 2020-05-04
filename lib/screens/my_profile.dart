@@ -34,7 +34,7 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void changeMyDP(BuildContext context) async {
-    var result = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var result = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
     if (result == null) {
       return;
     }

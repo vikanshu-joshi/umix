@@ -9,6 +9,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:progressive_image/progressive_image.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
 import 'package:umix/screens/final_post_upload.dart';
+import 'package:umix/widgets/common_widgets.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -31,7 +32,7 @@ class _NewPostState extends State<NewPost> {
   }
 
   void _captureImage(ImageSource source) async {
-    var result = await ImagePicker.pickImage(source: source);
+    var result = await ImagePicker.pickImage(source: source,imageQuality: 50);
     if (result != null) {
       setState(() {
         imageCaptured = true;
@@ -164,12 +165,20 @@ class _NewPostState extends State<NewPost> {
     });
   }
 
-  void nextFinalPostScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        fullscreenDialog: true,
+  void nextFinalPostScreen(BuildContext context) async {
+    bool result = await Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: false,
         builder: (ctx) {
           return FinalPostUpload(imageCaptured ? loadedImage : null);
         }));
+    if(result){
+      setState(() {
+        imageCaptured = false;
+        loadedImage = null;
+      });
+    }else{
+      showAlertError('Failed', context);
+    }
   }
 
   @override

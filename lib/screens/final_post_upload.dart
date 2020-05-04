@@ -27,6 +27,9 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
   Widget getAppBar() {
     return Device.get().isIos
         ? CupertinoNavigationBar(
+          leading: IconButton(icon: Icon(CupertinoIcons.back), onPressed: (){
+            Navigator.of(context).pop(false);
+          }),
             middle: Text('Enter final details'),
             trailing: IconButton(
               icon: Icon(
@@ -36,6 +39,9 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
               onPressed: postFinalised,
             ))
         : AppBar(
+          leading: IconButton(icon: Icon(Icons.clear,color: Colors.black,), onPressed: (){
+            Navigator.of(context).pop(false);
+          }),
             title: Text('Enter final details'),
             actions: <Widget>[
               IconButton(
@@ -85,6 +91,9 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           status.ref.getDownloadURL().then((uri) {
             newPost.image = uri;
             uploadPost(newPost);
+          }).catchError((error){
+            _progressDialog.hide();
+            showAlertError(error.message, context);
           });
         });
       } else {
@@ -111,7 +120,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           .setData(p)
           .then((_) {
             _progressDialog.hide();
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           })
           .catchError((error) {
             _progressDialog.hide();
