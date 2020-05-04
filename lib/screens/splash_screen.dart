@@ -14,6 +14,7 @@ class SplashScreen extends StatelessWidget {
   static FirebaseUser mUser;
   static FirebaseAuth mAuth = FirebaseAuth.instance;
   static CollectionReference userRef = Firestore.instance.collection('users');
+  static CollectionReference postRef = Firestore.instance.collection('posts');
   static StorageReference storageReference = FirebaseStorage.instance.ref();
   static User myProfile;
 
@@ -25,8 +26,11 @@ class SplashScreen extends StatelessWidget {
 
   Future<bool> fetchMyProfile() async {
     var status = await Permission.storage.request();
-    if (status != PermissionStatus.granted) {
+    var status2 = await Permission.location.request();
+    if (status.isDenied || status2.isDenied) {
       fetchMyProfile();
+    } else if(status.isPermanentlyDenied || status2.isPermanentlyDenied){
+      openAppSettings();
     } else {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       userRef.document(mUser.uid).get().then((data) {

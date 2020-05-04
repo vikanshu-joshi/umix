@@ -11,9 +11,11 @@ class User {
 }
 
 class Post{
+  String id;
   String caption;
-  bool multiImages;
-  List<String> images;
+  String image;
+  String location;
+  String owner;
   int likes;
-  
+  Post(this.id,this.caption,this.image,this.location,this.owner,this.likes);
 }

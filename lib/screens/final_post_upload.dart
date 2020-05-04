@@ -3,7 +3,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:progressive_image/progressive_image.dart';
+import 'package:umix/models/data.dart';
+import 'package:umix/screens/splash_screen.dart';
+import 'package:umix/widgets/common_widgets.dart';
+import 'package:uuid/uuid.dart';
 
 class FinalPostUpload extends StatefulWidget {
   final File image;
@@ -12,41 +18,138 @@ class FinalPostUpload extends StatefulWidget {
   _FinalPostUploadState createState() => _FinalPostUploadState();
 }
 
-Widget getAppBar() {
-  return Device.get().isIos
-      ? CupertinoNavigationBar(
-          middle: Text('Enter final details'),
-          trailing: Icon(
-            CupertinoIcons.forward,
-            color: Colors.black,
-          ),
-        )
-      : AppBar(
-          title: Text('Enter final details'),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.check, color: Colors.black), onPressed: null)
-          ],
-        );
-}
-
 class _FinalPostUploadState extends State<FinalPostUpload> {
   TextEditingController _caption;
+  TextEditingController _location;
+  String _currentLocation;
+  ProgressDialog _progressDialog;
+
+  Widget getAppBar() {
+    return Device.get().isIos
+        ? CupertinoNavigationBar(
+            middle: Text('Enter final details'),
+            trailing: IconButton(
+              icon: Icon(
+                CupertinoIcons.forward,
+                color: Colors.black,
+              ),
+              onPressed: postFinalised,
+            ))
+        : AppBar(
+            title: Text('Enter final details'),
+            actions: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.check, color: Colors.black),
+                  onPressed: postFinalised)
+            ],
+          );
+  }
+
+  void getLocation() {
+    _progressDialog.show();
+    final Geolocator locator = Geolocator()..forceAndroidLocationManager;
+    locator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((location) {
+      locator
+          .placemarkFromCoordinates(location.latitude, location.longitude)
+          .then((data) {
+        Placemark place = data[0];
+        _progressDialog.hide();
+        setState(() {
+          _currentLocation =
+              '${place.locality}, ${place.postalCode}, ${place.country}';
+          _location.text = _currentLocation;
+        });
+      });
+    }).catchError((error) {
+      showAlertError(error.message, context);
+    });
+  }
+
+  void postFinalised() {
+    String caption = _caption.text.trim();
+    String location = _location.text.trim();
+    if (widget.image == null && caption.isEmpty) {
+      Navigator.of(context).pop();
+      return;
+    } else {
+      _progressDialog.show();
+      var id = Uuid().v4().toString();
+      Post newPost =
+          Post(id, caption, 'null', location, SplashScreen.mUser.uid, 0);
+      if (widget.image != null) {
+        var upload =
+            SplashScreen.storageReference.child('posts').child(id + '.jpg');
+        upload.putFile(widget.image).onComplete.then((status) {
+          status.ref.getDownloadURL().then((uri) {
+            newPost.image = uri;
+            uploadPost(newPost);
+          });
+        });
+      } else {
+        uploadPost(newPost);
+      }
+    }
+  }
+
+  void uploadPost(Post _post) {
+    Map<String, String> data = {
+      'id': _post.id,
+      'caption': _post.caption,
+      'image': _post.image,
+      'owner': _post.owner,
+      'likes': _post.likes.toString(),
+      'location': _post.location
+    };
+    SplashScreen.postRef.document(_post.id).setData(data).then((_) {
+      Map<String, String> p = {_post.id: _post.id};
+      SplashScreen.userRef
+          .document(SplashScreen.mUser.uid)
+          .collection('other')
+          .document('posts')
+          .setData(p)
+          .then((_) {
+            _progressDialog.hide();
+            Navigator.of(context).pop();
+          })
+          .catchError((error) {
+            _progressDialog.hide();
+            showAlertError(error.message, context);
+          });
+    }).catchError((error) {
+      _progressDialog.hide();
+      showAlertError(error.message, context);
+    });
+  }
 
   @override
   void initState() {
     _caption = TextEditingController();
+    _location = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     _caption.dispose();
+    _location.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _progressDialog = ProgressDialog(context,
+        isDismissible: true, type: ProgressDialogType.Normal);
+    _progressDialog.style(
+      progressWidget: Container(
+        padding: const EdgeInsets.all(15.0),
+        child: CircularProgressIndicator(),
+      ),
+      elevation: 2,
+      message: 'Please Wait.....',
+      borderRadius: 5,
+    );
     var mediaQuery = MediaQuery.of(context);
     return Scaffold(
       appBar: getAppBar(),
@@ -98,19 +201,19 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
                     padding: const EdgeInsets.all(10),
                     child: Device.get().isIos
                         ? CupertinoTextField(
-                            controller: _caption,
+                            controller: _location,
                             placeholder: 'Enter Location',
                           )
                         : TextField(
-                            controller: _caption,
+                            controller: _location,
                             decoration:
                                 InputDecoration(hintText: 'Enter Location'),
                           ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(20),
-                    child: RaisedButton(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(20),
+                      child: RaisedButton(
+                        padding: const EdgeInsets.all(10),
                         color: Theme.of(context).primaryColor,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -124,8 +227,8 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
                             )
                           ],
                         ),
-                        onPressed: () {}),
-                  )
+                        onPressed: getLocation,
+                      ))
                 ],
               ),
             )
