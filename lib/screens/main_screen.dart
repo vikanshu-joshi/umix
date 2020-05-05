@@ -8,6 +8,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:umix/screens/my_profile.dart';
 import 'package:umix/screens/new_post_screen.dart';
+import 'package:umix/screens/search_users.dart';
 import 'package:umix/screens/splash_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -39,12 +40,13 @@ class _MainScreenState extends State<MainScreen> {
           '1',
           style: TextStyle(color: Colors.black),
         )),
-        NewPost(),
         Center(
             child: Text(
-          '3',
+          '2',
           style: TextStyle(color: Colors.black),
         )),
+        NewPost(),
+        SearchUsers(),
         MyProfile(),
       ],
     );
@@ -76,6 +78,10 @@ class _MainScreenState extends State<MainScreen> {
                 GButton(
                   icon: LineIcons.home,
                   text: Device.get().isTablet ? 'Home' : '',
+                ),
+                GButton(
+                  icon: Icons.chat_bubble_outline,
+                  text: Device.get().isTablet ? 'Chats' : '',
                 ),
                 GButton(
                   icon: LineIcons.plus,

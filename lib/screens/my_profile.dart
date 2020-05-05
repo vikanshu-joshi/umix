@@ -360,7 +360,7 @@ class _MyProfileState extends State<MyProfile> {
                 IconButton(
                     icon: Icon(
                       Icons.image,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     onPressed: () => changeMyDP(context))
               ],
@@ -368,12 +368,15 @@ class _MyProfileState extends State<MyProfile> {
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
+                stretchModes: [StretchMode.zoomBackground],
                 centerTitle: true,
                 title: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 30,vertical: 2),
+                  color: Theme.of(context).primaryColor.withOpacity(0.5),
                   child: Text(
                     SplashScreen.myProfile.name,
                     style:
-                        TextStyle(fontFamily: 'Aclonica', color: Colors.white),
+                        TextStyle(fontFamily: 'Aclonica', color: Colors.black),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
