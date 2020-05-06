@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
                   text: Device.get().isTablet ? 'Home' : '',
                 ),
                 GButton(
-                  icon: Icons.chat_bubble_outline,
+                  icon: Icons.chat,
                   text: Device.get().isTablet ? 'Chats' : '',
                 ),
                 GButton(

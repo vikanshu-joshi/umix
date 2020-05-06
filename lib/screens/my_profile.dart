@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -34,7 +33,8 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void changeMyDP(BuildContext context) async {
-    var result = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var result = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
     if (result == null) {
       return;
     }
@@ -371,8 +371,8 @@ class _MyProfileState extends State<MyProfile> {
                 stretchModes: [StretchMode.zoomBackground],
                 centerTitle: true,
                 title: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30,vertical: 2),
-                  color: Theme.of(context).primaryColor.withOpacity(0.5),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 2),
+                  color: Theme.of(context).primaryColor,
                   child: Text(
                     SplashScreen.myProfile.name,
                     style:
@@ -386,10 +386,12 @@ class _MyProfileState extends State<MyProfile> {
                         'assets/images/default.png',
                       )
                     : Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: NetworkImage(SplashScreen.myProfile.image),fit: BoxFit.fill)
-                      ),
-                      width: mediaQuery.width,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    NetworkImage(SplashScreen.myProfile.image),
+                                fit: BoxFit.fill)),
+                        width: mediaQuery.width,
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
                           child: FadeInImage.memoryNetwork(

@@ -34,11 +34,19 @@ class _SearchUsersState extends State<SearchUsers> {
         if (f.data['uid'] != SplashScreen.mUser.uid) {
           user.add(value);
         }
+      });
+      if (user.isEmpty) {
+        _progressDialog.hide();
+        setState(() {
+          _searchedUsers = null;
+        });
+        showAlertError('No users found', context);
+      } else {
         _progressDialog.hide();
         setState(() {
           _searchedUsers = user;
         });
-      });
+      }
     }).catchError((error) {
       _progressDialog.hide();
       showAlertError(error.toString(), context);
@@ -64,10 +72,6 @@ class _SearchUsersState extends State<SearchUsers> {
                 CupertinoActionSheetAction(
                   onPressed: () => Navigator.of(context).pop('email'),
                   child: Text('Search by Email'),
-                ),
-                CupertinoActionSheetAction(
-                  onPressed: () => Navigator.of(context).pop('uid'),
-                  child: Text('Search by UID'),
                 ),
               ],
               cancelButton: CupertinoActionSheetAction(
@@ -116,24 +120,6 @@ class _SearchUsersState extends State<SearchUsers> {
                             style: TextStyle(color: Colors.blue, fontSize: 20),
                           )),
                       trailing: _searchParam == 'email'
-                          ? Icon(
-                              Icons.done,
-                              color: Colors.green,
-                            )
-                          : SizedBox(),
-                    ),
-                  ),
-                  Divider(),
-                  Container(
-                    child: ListTile(
-                      leading: SizedBox(),
-                      title: FlatButton(
-                          onPressed: () => Navigator.of(context).pop('uid'),
-                          child: Text(
-                            'Search by UID',
-                            style: TextStyle(color: Colors.blue, fontSize: 20),
-                          )),
-                      trailing: _searchParam == 'uid'
                           ? Icon(
                               Icons.done,
                               color: Colors.green,

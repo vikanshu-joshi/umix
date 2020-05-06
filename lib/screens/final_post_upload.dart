@@ -27,9 +27,11 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
   Widget getAppBar() {
     return Device.get().isIos
         ? CupertinoNavigationBar(
-          leading: IconButton(icon: Icon(CupertinoIcons.back), onPressed: (){
-            Navigator.of(context).pop(false);
-          }),
+            leading: IconButton(
+                icon: Icon(CupertinoIcons.back),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }),
             middle: Text('Enter final details'),
             trailing: IconButton(
               icon: Icon(
@@ -39,9 +41,14 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
               onPressed: postFinalised,
             ))
         : AppBar(
-          leading: IconButton(icon: Icon(Icons.clear,color: Colors.black,), onPressed: (){
-            Navigator.of(context).pop(false);
-          }),
+            leading: IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }),
             title: Text('Enter final details'),
             actions: <Widget>[
               IconButton(
@@ -82,8 +89,8 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
     } else {
       _progressDialog.show();
       var id = Uuid().v4().toString();
-      Post newPost =
-          Post(id, caption, 'null', location, SplashScreen.mUser.uid, 0);
+      Post newPost = Post(id, caption, 'null',
+          location.isEmpty ? 'null' : location, SplashScreen.mUser.uid, 0);
       if (widget.image != null) {
         var upload =
             SplashScreen.storageReference.child('posts').child(id + '.jpg');
@@ -91,7 +98,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           status.ref.getDownloadURL().then((uri) {
             newPost.image = uri;
             uploadPost(newPost);
-          }).catchError((error){
+          }).catchError((error) {
             _progressDialog.hide();
             showAlertError(error.message, context);
           });
@@ -103,15 +110,19 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
   }
 
   void uploadPost(Post _post) {
-    Map<String, String> data = {
+    SplashScreen.postRef
+        .document(SplashScreen.mUser.uid)
+        .collection('userPosts')
+        .document(_post.id)
+        .setData({
       'id': _post.id,
       'caption': _post.caption,
       'image': _post.image,
       'owner': _post.owner,
-      'likes': _post.likes.toString(),
-      'location': _post.location
-    };
-    SplashScreen.postRef.document(_post.id).setData(data).then((_) {
+      'likes': {},
+      'location': _post.location,
+      'timestamp': DateTime.now().microsecondsSinceEpoch
+    }).then((_) {
       Map<String, String> p = {_post.id: _post.id};
       SplashScreen.userRef
           .document(SplashScreen.mUser.uid)
@@ -119,13 +130,12 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           .document('posts')
           .setData(p)
           .then((_) {
-            _progressDialog.hide();
-            Navigator.of(context).pop(true);
-          })
-          .catchError((error) {
-            _progressDialog.hide();
-            showAlertError(error.message, context);
-          });
+        _progressDialog.hide();
+        Navigator.of(context).pop(true);
+      }).catchError((error) {
+        _progressDialog.hide();
+        showAlertError(error.message, context);
+      });
     }).catchError((error) {
       _progressDialog.hide();
       showAlertError(error.message, context);
@@ -194,50 +204,55 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Device.get().isIos
-                        ? CupertinoTextField(
-                            controller: _caption,
-                            placeholder: 'Enter Caption',
-                          )
-                        : TextField(
-                            controller: _caption,
-                            decoration:
-                                InputDecoration(hintText: 'Enter Caption'),
-                          ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Device.get().isIos
-                        ? CupertinoTextField(
-                            controller: _location,
-                            placeholder: 'Enter Location',
-                          )
-                        : TextField(
-                            controller: _location,
-                            decoration:
-                                InputDecoration(hintText: 'Enter Location'),
-                          ),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.all(20),
-                      child: RaisedButton(
-                        padding: const EdgeInsets.all(10),
-                        color: Theme.of(context).primaryColor,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.my_location),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text('Use Current Location'),
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 20,
+                        backgroundImage:
+                            NetworkImage(SplashScreen.myProfile.image),
+                      ),
+                      title: Device.get().isIos
+                          ? CupertinoTextField(
+                              controller: _caption,
+                              placeholder: 'Enter Caption',
                             )
-                          ],
-                        ),
-                        onPressed: getLocation,
-                      ))
+                          : TextField(
+                              controller: _caption,
+                              decoration:
+                                  InputDecoration(hintText: 'Enter Caption'),
+                            ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 20,
+                        backgroundImage: AssetImage('assets/images/marker.png'),
+                      ),
+                      title: Device.get().isIos
+                          ? CupertinoTextField(
+                              controller: _location,
+                              placeholder: 'Enter Location',
+                            )
+                          : TextField(
+                              controller: _location,
+                              decoration:
+                                  InputDecoration(hintText: 'Enter Location'),
+                            ),
+                    ),
+                  ),
+                  Container(
+                      padding: const EdgeInsets.all(30),
+                      child: RaisedButton.icon(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50)),
+                          color: Theme.of(context).primaryColor,
+                          onPressed: getLocation,
+                          icon: Icon(Icons.my_location),
+                          label: Text('Use Current Location')))
                 ],
               ),
             )
