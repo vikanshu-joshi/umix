@@ -91,13 +91,13 @@ class _CreateAccountState extends State<CreateAccount> {
         Device.get().isIos
             ? Navigator.of(context).pop()
             : await _progressDialog.hide();
-        showAlertError(error.message, context);
+        showAlertError(error.toString(), context);
       }
     } catch (error) {
       Device.get().isIos
           ? Navigator.of(context).pop()
           : await _progressDialog.hide();
-      showAlertError(error.toString(), context);
+      showAlertError(error.message, context);
     }
   }
 
@@ -123,8 +123,6 @@ class _CreateAccountState extends State<CreateAccount> {
             });
           });
   }
-
-  
 
   Widget getLayout(BuildContext context) {
     return SingleChildScrollView(

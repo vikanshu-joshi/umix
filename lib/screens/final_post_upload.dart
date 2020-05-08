@@ -30,7 +30,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
             leading: IconButton(
                 icon: Icon(CupertinoIcons.back),
                 onPressed: () {
-                  Navigator.of(context).pop(false);
+                  Navigator.of(context).pop();
                 }),
             middle: Text('Enter final details'),
             trailing: IconButton(
@@ -47,7 +47,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
                   color: Colors.black,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop(false);
+                  Navigator.of(context).pop();
                 }),
             title: Text('Enter final details'),
             actions: <Widget>[
@@ -58,26 +58,31 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           );
   }
 
-  void getLocation() {
-    _progressDialog.show();
+  void getLocation() async {
     final Geolocator locator = Geolocator()..forceAndroidLocationManager;
-    locator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((location) {
+    var result = await locator.isLocationServiceEnabled();
+    if (!result) showAlertError('Enable location services first', context);
+    result = await locator.isLocationServiceEnabled();
+    if (result) {
+      _progressDialog.show();
       locator
-          .placemarkFromCoordinates(location.latitude, location.longitude)
-          .then((data) {
-        Placemark place = data[0];
-        _progressDialog.hide();
-        setState(() {
-          _currentLocation =
-              '${place.locality}, ${place.postalCode}, ${place.country}';
-          _location.text = _currentLocation;
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+          .then((location) {
+        locator
+            .placemarkFromCoordinates(location.latitude, location.longitude)
+            .then((data) {
+          Placemark place = data[0];
+          _progressDialog.hide();
+          setState(() {
+            _currentLocation =
+                '${place.locality}, ${place.postalCode}, ${place.country}';
+            _location.text = _currentLocation;
+          });
         });
+      }).catchError((error) {
+        showAlertError(error.message, context);
       });
-    }).catchError((error) {
-      showAlertError(error.message, context);
-    });
+    }
   }
 
   void postFinalised() {
@@ -89,8 +94,16 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
     } else {
       _progressDialog.show();
       var id = Uuid().v4().toString();
-      Post newPost = Post(id, caption, 'null',
-          location.isEmpty ? 'null' : location, SplashScreen.mUser.uid, 0);
+      Post newPost = Post(
+          id,
+          caption,
+          'null',
+          location.isEmpty ? 'null' : location,
+          SplashScreen.mUser.uid,
+          0,
+          0,
+          0,
+          {});
       if (widget.image != null) {
         var upload =
             SplashScreen.storageReference.child('posts').child(id + '.jpg');
@@ -159,7 +172,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
   @override
   Widget build(BuildContext context) {
     _progressDialog = ProgressDialog(context,
-        isDismissible: true, type: ProgressDialogType.Normal);
+        isDismissible: false, type: ProgressDialogType.Normal);
     _progressDialog.style(
       progressWidget: Container(
         padding: const EdgeInsets.all(15.0),

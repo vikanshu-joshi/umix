@@ -5,6 +5,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:umix/models/data.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:umix/screens/user_profile.dart';
 import 'package:umix/widgets/common_widgets.dart';
 
 class SearchUsers extends StatefulWidget {
@@ -201,24 +202,40 @@ class _SearchUsersState extends State<SearchUsers> {
                 : ListView.builder(
                     itemCount: _searchedUsers.length,
                     itemBuilder: (ctx, index) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(_searchedUsers[index].name),
-                              contentPadding: EdgeInsets.all(10),
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: 30,
-                                backgroundImage:
-                                    NetworkImage(_searchedUsers[index].image),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (ctx) {
+                                return UserProfile(_searchedUsers[index].uid);
+                              }));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(_searchedUsers[index].name),
+                                contentPadding: EdgeInsets.all(10),
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.black,
+                                  radius: 31,
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        _searchedUsers[index].image == 'default'
+                                            ? AssetImage(
+                                                'assets/images/default.png')
+                                            : NetworkImage(
+                                                _searchedUsers[index].image),
+                                  ),
+                                ),
                               ),
-                            ),
-                            Divider(
-                              color: Colors.grey,
-                            )
-                          ],
+                              Divider(
+                                color: Colors.grey,
+                              )
+                            ],
+                          ),
                         ),
                       );
                     }),

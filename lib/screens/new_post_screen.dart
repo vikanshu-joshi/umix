@@ -18,10 +18,10 @@ class NewPost extends StatefulWidget {
 
 class _NewPostState extends State<NewPost> {
   PageController _page = PageController(
-    initialPage: 1,
+    initialPage: 0,
   );
   List<String> imagesList;
-  int currentIndex = 1;
+  int currentIndex = 0;
   bool imageCaptured = false;
   File loadedImage;
 
@@ -32,7 +32,7 @@ class _NewPostState extends State<NewPost> {
   }
 
   void _captureImage(ImageSource source) async {
-    var result = await ImagePicker.pickImage(source: source,imageQuality: 50);
+    var result = await ImagePicker.pickImage(source: source, imageQuality: 50);
     if (result != null) {
       setState(() {
         imageCaptured = true;
@@ -138,20 +138,24 @@ class _NewPostState extends State<NewPost> {
     return Device.get().isIos
         ? CupertinoNavigationBar(
             leading: Text('Create New Post'),
-            trailing: FlatButton(
-                onPressed: () {
-                  nextFinalPostScreen(context);
-                },
-                child: Text('Next')),
+            trailing: imageCaptured
+                ? FlatButton(
+                    onPressed: () {
+                      nextFinalPostScreen(context);
+                    },
+                    child: Text('Next'))
+                : SizedBox(),
           )
         : AppBar(
             title: Text('Create New Post'),
             actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    nextFinalPostScreen(context);
-                  },
-                  child: Text('Next')),
+              imageCaptured
+                  ? FlatButton(
+                      onPressed: () {
+                        nextFinalPostScreen(context);
+                      },
+                      child: Text('Next'))
+                  : SizedBox(),
             ],
           );
   }
@@ -171,12 +175,13 @@ class _NewPostState extends State<NewPost> {
         builder: (ctx) {
           return FinalPostUpload(imageCaptured ? loadedImage : null);
         }));
-    if(result){
+    if (result == null) {
+    } else if (result) {
       setState(() {
         imageCaptured = false;
         loadedImage = null;
       });
-    }else{
+    } else {
       showAlertError('Failed', context);
     }
   }
