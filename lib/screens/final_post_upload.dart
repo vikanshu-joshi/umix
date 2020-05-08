@@ -100,8 +100,8 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
           'null',
           location.isEmpty ? 'null' : location,
           SplashScreen.mUser.uid,
-          0,
-          0,
+          {},
+          {},
           0,
           {});
       if (widget.image != null) {

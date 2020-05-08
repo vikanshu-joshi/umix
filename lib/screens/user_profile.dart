@@ -19,6 +19,13 @@ class _UserProfileState extends State<UserProfile> {
   User _currentUser;
   List<Post> _postsList;
 
+  void like() {
+  }
+
+  void dislike() {}
+
+  void comment() {}
+
   Widget getAppBar() {
     return device
         ? CupertinoNavigationBar(
@@ -113,30 +120,66 @@ class _UserProfileState extends State<UserProfile> {
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
-                                        Icon(CustomIcons.icons8_thumbs_up_100),
+                                        Icon(
+                                          _postsList[index].likes.containsKey(
+                                                  SplashScreen.myProfile.uid)
+                                              ? CustomIcons.thumbs_up_filled
+                                              : CustomIcons.thumbs_up,
+                                          color: _postsList[index]
+                                                  .likes
+                                                  .containsKey(SplashScreen
+                                                      .myProfile.uid)
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.black,
+                                        ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 8),
-                                          child: Text(_postsList[index].likes.toString()),
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
+                                          child: Text(_postsList[index]
+                                              .likes
+                                              .length
+                                              .toString()),
                                         )
                                       ],
                                     ),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
-                                        Icon(CustomIcons.icons8_thumbs_down_100),
+                                        Icon(
+                                          _postsList[index]
+                                                  .dislikes
+                                                  .containsKey(SplashScreen
+                                                      .myProfile.uid)
+                                              ? CustomIcons.thumbs_down_filled
+                                              : CustomIcons.thumbs_down,
+                                          color: _postsList[index]
+                                                  .dislikes
+                                                  .containsKey(SplashScreen
+                                                      .myProfile.uid)
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.black,
+                                        ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 8),
-                                          child: Text(_postsList[index].dislikes.toString()),
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
+                                          child: Text(_postsList[index]
+                                              .dislikes
+                                              .length
+                                              .toString()),
                                         )
                                       ],
                                     ),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
-                                        Icon(CustomIcons.icons8_chat_message_100),
+                                        Icon(CustomIcons.comment),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 8),
-                                          child: Text(_postsList[index].comments.length.toString()),
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
+                                          child: Text(_postsList[index]
+                                              .comments
+                                              .length
+                                              .toString()),
                                         )
                                       ],
                                     ),
@@ -202,16 +245,28 @@ class _UserProfileState extends State<UserProfile> {
         .then((doc) {
       List<Post> posts = [];
       doc.documents.forEach((f) {
+        Map<String, String> likes = {};
+        f.data['likes'].forEach((f1, f2) {
+          likes[f1.toString()] = f2.toString();
+        });
+        Map<String, String> dislikes = {};
+        f.data['dislikes'].forEach((f1, f2) {
+          likes[f1.toString()] = f2.toString();
+        });
+        Map<String, String> comments = {};
+        f.data['comments'].forEach((f1, f2) {
+          likes[f1.toString()] = f2.toString();
+        });
         posts.add(Post(
             f.data['id'],
             f.data['caption'],
             f.data['image'],
             f.data['location'],
             f.data['owner'],
-            f.data['likes'],
-            f.data['dislikes'],
+            likes,
+            dislikes,
             int.parse(f.data['timestamp'].toString()),
-            {}));
+            comments));
       });
       setState(() {
         _postsList = posts;

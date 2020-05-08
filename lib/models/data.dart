@@ -16,8 +16,8 @@ class Post {
   String image;
   String location;
   String owner;
-  int likes;
-  int dislikes;
+  Map<String,String> likes;
+  Map<String,String> dislikes;
   Map<String, String> comments;
   int timestamp;
   Post(this.id, this.caption, this.image, this.location, this.owner, this.likes,this.dislikes,this.timestamp, this.comments);
