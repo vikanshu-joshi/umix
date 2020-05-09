@@ -326,14 +326,14 @@ class _MyProfileState extends State<MyProfile> {
 
   void logOut(BuildContext context) {
     SplashScreen.mAuth.signOut().then((_) {
-      SplashScreen.mUser = null;
       Navigator.of(context).pushReplacementNamed(SplashScreen.route);
+      SplashScreen.mUser = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!SplashScreen.mUser.isEmailVerified) {
+    if (SplashScreen.mUser != null && !SplashScreen.mUser.isEmailVerified) {
       SplashScreen.mAuth.currentUser().then((_user) {
         setState(() {
           SplashScreen.mUser = _user;

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
@@ -95,15 +96,16 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
       _progressDialog.show();
       var id = Uuid().v4().toString();
       Post newPost = Post(
-          id,
-          caption,
-          'null',
-          location.isEmpty ? 'null' : location,
-          SplashScreen.mUser.uid,
-          {},
-          {},
-          0,
-          {});
+        id,
+        caption,
+        null,
+        location.isEmpty ? null : location,
+        SplashScreen.mUser.uid,
+        new LinkedHashMap<dynamic,dynamic>(),
+        new LinkedHashMap<dynamic,dynamic>(),
+        0,
+        new LinkedHashMap<dynamic,LinkedHashMap<dynamic,dynamic>>(),
+      );
       if (widget.image != null) {
         var upload =
             SplashScreen.storageReference.child('posts').child(id + '.jpg');
@@ -132,7 +134,9 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
       'caption': _post.caption,
       'image': _post.image,
       'owner': _post.owner,
-      'likes': {},
+      'likes': _post.likes,
+      'dislikes': _post.dislikes,
+      'comments': _post.comments,
       'location': _post.location,
       'timestamp': DateTime.now().microsecondsSinceEpoch
     }).then((_) {

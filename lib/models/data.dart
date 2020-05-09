@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:intl/intl.dart';
 
 class User {
@@ -16,9 +18,9 @@ class Post {
   String image;
   String location;
   String owner;
-  Map<String,String> likes;
-  Map<String,String> dislikes;
-  Map<String, String> comments;
+  LinkedHashMap<dynamic,dynamic> likes;
+  LinkedHashMap<dynamic,dynamic> dislikes;
+  LinkedHashMap<dynamic, dynamic> comments;
   int timestamp;
   Post(this.id, this.caption, this.image, this.location, this.owner, this.likes,this.dislikes,this.timestamp, this.comments);
 }
