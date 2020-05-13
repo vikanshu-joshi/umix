@@ -1,12 +1,15 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:umix/custom/custom_icons_icons.dart';
+import 'package:umix/screens/my_timeline.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:umix/widgets/common_widgets.dart';
 
@@ -331,6 +334,12 @@ class _MyProfileState extends State<MyProfile> {
     });
   }
 
+  void viewMyPosts() {
+    Navigator.of(context).push(MaterialPageRoute(fullscreenDialog: true,builder: (ctx) {
+      return MyTimeLine(SplashScreen.myProfile.uid);
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (SplashScreen.mUser != null && !SplashScreen.mUser.isEmailVerified) {
@@ -371,10 +380,11 @@ class _MyProfileState extends State<MyProfile> {
                 stretchModes: [StretchMode.zoomBackground],
                 centerTitle: true,
                 title: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 2),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                   color: Theme.of(context).primaryColor,
                   child: Text(
                     SplashScreen.myProfile.name,
+                    textAlign: TextAlign.center,
                     style:
                         TextStyle(fontFamily: 'Aclonica', color: Colors.black),
                     maxLines: 1,
@@ -386,18 +396,28 @@ class _MyProfileState extends State<MyProfile> {
                         'assets/images/default.png',
                       )
                     : Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image:
-                                    NetworkImage(SplashScreen.myProfile.image),
-                                fit: BoxFit.fill)),
-                        width: mediaQuery.width,
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                          child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: SplashScreen.myProfile.image,
-                              fit: BoxFit.fitHeight),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            CachedNetworkImage(
+                              width: mediaQuery.width,
+                              imageUrl: SplashScreen.myProfile.image,
+                              fit: BoxFit.fill,
+                              placeholder: (ctx, str) => Center(
+                                child: CupertinoActivityIndicator(),
+                              ),
+                            ),
+                            BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                              child: CachedNetworkImage(
+                                imageUrl: SplashScreen.myProfile.image,
+                                fit: BoxFit.fitHeight,
+                                placeholder: (ctx, str) => Center(
+                                  child: CupertinoActivityIndicator(),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
               ),
@@ -409,38 +429,85 @@ class _MyProfileState extends State<MyProfile> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 50),
-                child: GestureDetector(
-                  onTap: () => verifyEmail(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        SplashScreen.mUser.isEmailVerified
-                            ? 'You are a verified user'
-                            : 'You need to verify email',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 10),
-                        child: Icon(
-                          SplashScreen.mUser.isEmailVerified
-                              ? Icons.thumb_up
-                              : Icons.error,
-                          color: SplashScreen.mUser.isEmailVerified
-                              ? Colors.green
-                              : Colors.red,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
               Flexible(
                   fit: FlexFit.tight,
                   child: ListView(
                     children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: viewMyPosts,
+                            child: Card(
+                                elevation: 5.0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(CustomIcons.my_timeline),
+                                      Text('My Posts')
+                                    ],
+                                  ),
+                                )),
+                          ),
+                          Card(
+                              elevation: 5.0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(CustomIcons.friends),
+                                    Text('Friends')
+                                  ],
+                                ),
+                              )),
+                          Card(
+                              elevation: 5.0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(CustomIcons.send_request),
+                                    Text('Requests')
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+                      ListTile(
+                        title: Text(
+                          SplashScreen.mUser.isEmailVerified
+                              ? 'You are a verified user'
+                              : 'You need to verify email',
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(
+                              SplashScreen.mUser.isEmailVerified
+                                  ? Icons.thumb_up
+                                  : Icons.error,
+                              color: SplashScreen.mUser.isEmailVerified
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                            onPressed: () {
+                              if (!SplashScreen.mUser.isEmailVerified) {
+                                verifyEmail(context);
+                              }
+                            }),
+                      ),
                       ListTile(
                         title: Text(
                           SplashScreen.myProfile.name,
@@ -495,32 +562,17 @@ class _MyProfileState extends State<MyProfile> {
                               changeGender(context);
                             }),
                       ),
+                      ListTile(
+                        title: Text('Logout'),
+                        trailing: IconButton(
+                            icon: Icon(
+                              LineIcons.power_off,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => logOut(context)),
+                      )
                     ],
                   )),
-              Container(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.width * 0.05,
-                    top: MediaQuery.of(context).size.width * 0.02),
-                child: Device.get().isIos
-                    ? CupertinoButton(
-                        color: Colors.red,
-                        child: Text(
-                          'LOGOUT',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () => logOut(context))
-                    : FlatButton(
-                        color: Colors.red,
-                        onPressed: () => logOut(context),
-                        child: Text(
-                          'LOGOUT',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        )),
-              )
             ],
           ),
         ));

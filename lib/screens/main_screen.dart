@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
               tabBackgroundColor: Colors.grey[800],
               tabs: [
                 GButton(
-                  icon: LineIcons.home,
+                  icon: CustomIcons.tmeline,
                   text: Device.get().isTablet ? 'Home' : '',
                 ),
                 GButton(

@@ -89,7 +89,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
   void postFinalised() {
     String caption = _caption.text.trim();
     String location = _location.text.trim();
-    if (widget.image == null && caption.isEmpty) {
+    if (widget.image == null) {
       Navigator.of(context).pop();
       return;
     } else {
@@ -138,7 +138,7 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
       'dislikes': _post.dislikes,
       'comments': _post.comments,
       'location': _post.location,
-      'timestamp': DateTime.now().microsecondsSinceEpoch
+      'timestamp': DateTime.now().millisecondsSinceEpoch
     }).then((_) {
       Map<String, String> p = {_post.id: _post.id};
       SplashScreen.userRef

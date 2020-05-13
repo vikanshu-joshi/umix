@@ -20,38 +20,40 @@ class _SearchUsersState extends State<SearchUsers> {
   String _searchParam = 'name';
 
   void handleSearch(String name) async {
-    _progressDialog.show();
-    SplashScreen.userRef
-        .where(
-          _searchParam,
-          isGreaterThanOrEqualTo: name.trim(),
-        )
-        .getDocuments()
-        .then((users) {
-      List<User> user = [];
-      users.documents.forEach((f) {
-        User value = User(f.data['name'], f.data['email'], f.data['dob'],
-            f.data['gender'], f.data['image'], f.data['uid']);
-        if (f.data['uid'] != SplashScreen.mUser.uid) {
-          user.add(value);
+    if (name.isNotEmpty) {
+      _progressDialog.show();
+      SplashScreen.userRef
+          .where(
+            _searchParam,
+            isGreaterThanOrEqualTo: name.trim(),
+          )
+          .getDocuments()
+          .then((users) {
+        List<User> user = [];
+        users.documents.forEach((f) {
+          User value = User(f.data['name'], f.data['email'], f.data['dob'],
+              f.data['gender'], f.data['image'], f.data['uid']);
+          if (f.data['uid'] != SplashScreen.mUser.uid) {
+            user.add(value);
+          }
+        });
+        if (user.isEmpty) {
+          _progressDialog.hide();
+          setState(() {
+            _searchedUsers = null;
+          });
+          showAlertError('No users found', context);
+        } else {
+          _progressDialog.hide();
+          setState(() {
+            _searchedUsers = user;
+          });
         }
+      }).catchError((error) {
+        _progressDialog.hide();
+        showAlertError(error.toString(), context);
       });
-      if (user.isEmpty) {
-        _progressDialog.hide();
-        setState(() {
-          _searchedUsers = null;
-        });
-        showAlertError('No users found', context);
-      } else {
-        _progressDialog.hide();
-        setState(() {
-          _searchedUsers = user;
-        });
-      }
-    }).catchError((error) {
-      _progressDialog.hide();
-      showAlertError(error.toString(), context);
-    });
+    }
   }
 
   void _changeSearchParam() async {
@@ -203,6 +205,7 @@ class _SearchUsersState extends State<SearchUsers> {
                     itemCount: _searchedUsers.length,
                     itemBuilder: (ctx, index) {
                       return InkWell(
+                        splashColor: Theme.of(context).accentColor,
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               fullscreenDialog: true,
@@ -254,7 +257,7 @@ class _SearchUsersState extends State<SearchUsers> {
                         LineIcons.search,
                         color: Colors.black,
                       ),
-                      onPressed: null),
+                      onPressed: () => handleSearch(_search.text)),
                   Expanded(
                       child: TextField(
                     controller: _search,
