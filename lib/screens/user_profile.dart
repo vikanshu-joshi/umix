@@ -22,6 +22,8 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   var device = Device.get().isIos;
   User _currentUser;
+  String isFriend = 'none';
+  CollectionReference users = Firestore.instance.collection('users');
 
   void like(DocumentSnapshot snapshot, String myID) {
     LinkedHashMap likes = snapshot.data['likes'];
@@ -73,6 +75,65 @@ class _UserProfileState extends State<UserProfile> {
     }));
   }
 
+  void sendRequest() async {
+    String sendingTO = _currentUser.uid;
+    String sendingFROM = SplashScreen.myProfile.uid;
+    String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    CollectionReference myRefRequested =
+        users.document(sendingFROM).collection('requested');
+    CollectionReference otherRefRequests =
+        users.document(sendingTO).collection('requests');
+    if (isFriend == 'none') {
+      myRefRequested.document(sendingTO).setData({
+        'id': sendingTO,
+        'name': _currentUser.name,
+        'image': _currentUser.image,
+        'timestamp': timestamp
+      });
+      otherRefRequests.document(sendingFROM).setData({
+        'id': sendingFROM,
+        'name': SplashScreen.myProfile.name,
+        'image': SplashScreen.myProfile.image,
+        'timestamp': timestamp
+      });
+      setState(() {
+        isFriend = 'waiting';
+      });
+    } else if (isFriend == 'waiting') {
+      myRefRequested.document(sendingTO).delete();
+      otherRefRequests.document(sendingFROM).delete();
+      setState(() {
+        isFriend = 'none';
+      });
+    } else if (isFriend == 'respond') {
+      users.document(SplashScreen.myProfile.uid).collection('requests').document(sendingTO).delete();
+      users.document(_currentUser.uid).collection('requested').document(sendingFROM).delete();
+      CollectionReference myRefFriends =
+          users.document(sendingFROM).collection('friends');
+      CollectionReference otherRefFriends =
+          users.document(sendingTO).collection('friends');
+      myRefFriends.document(_currentUser.uid).setData({
+        _currentUser.uid: {
+          'id': sendingTO,
+          'name': _currentUser.name,
+          'image': _currentUser.image,
+          'timestamp': DateTime.now().millisecondsSinceEpoch.toString()
+        }
+      });
+      otherRefFriends.document(SplashScreen.myProfile.uid).setData({
+        SplashScreen.myProfile.uid: {
+          'id': sendingFROM,
+          'name': SplashScreen.myProfile.name,
+          'image': SplashScreen.myProfile.image,
+          'timestamp': DateTime.now().millisecondsSinceEpoch.toString()
+        }
+      });
+      setState(() {
+        isFriend = 'friend';
+      });
+    }
+  }
+
   Widget getAppBar() {
     return device
         ? CupertinoNavigationBar(
@@ -89,12 +150,49 @@ class _UserProfileState extends State<UserProfile> {
             title: _currentUser == null
                 ? Text('loading...')
                 : Text(_currentUser.uid),
+            actions: <Widget>[
+              IconButton(
+                  icon: Icon(
+                    isFriend == 'none'
+                        ? CustomIcons.send_request
+                        : isFriend == 'waiting'
+                            ? CustomIcons.request_waiting
+                            : isFriend == 'friend'
+                                ? CustomIcons.friends_1
+                                : CustomIcons.send_request,
+                    color: isFriend == 'none'
+                        ? Colors.white
+                        : isFriend == 'waiting'
+                            ? Colors.orange
+                            : isFriend == 'friend'
+                                ? Colors.green
+                                : Colors.white,
+                  ),
+                  onPressed: sendRequest)
+            ],
           );
   }
 
   Widget getLayout() {
     return Column(
       children: <Widget>[
+        isFriend == 'respond'
+            ? Container(
+              padding: const EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text('Want To Accept Request ?'),
+                  trailing: IconButton(
+                      icon: Icon(
+                        Icons.done,
+                        color: Colors.green,
+                      ),
+                      onPressed: sendRequest),
+                ),
+              )
+            : SizedBox(
+                height: 0,
+                width: 0,
+              ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,16 +212,20 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(top: 30),
-              child: Text(
-                _currentUser == null ? 'loading...' : _currentUser.name,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(
-                    color: Colors.black, fontFamily: 'Aclonica', fontSize: 25),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(top: 30),
+                child: Text(
+                  _currentUser == null ? 'loading...' : _currentUser.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Aclonica',
+                      fontSize: 25),
+                ),
               ),
-            )
+            ),
           ],
         ),
         Divider(
@@ -329,6 +431,43 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
+  void setFriendStatus() async {
+    var data = await users
+        .document(SplashScreen.myProfile.uid)
+        .collection('requested')
+        .document(_currentUser.uid)
+        .get();
+    if (data.exists) {
+      setState(() {
+        isFriend = 'waiting';
+      });
+      return;
+    }
+    data = await users
+        .document(SplashScreen.myProfile.uid)
+        .collection('requests')
+        .document(_currentUser.uid)
+        .get();
+    if (data.exists) {
+      setState(() {
+        isFriend = 'respond';
+      });
+      return;
+    }
+    data = await users
+        .document(SplashScreen.myProfile.uid)
+        .collection('friends')
+        .document(_currentUser.uid)
+        .get();
+    if (data.exists) {
+      setState(() {
+        isFriend = 'friend';
+      });
+      return;
+    }
+    isFriend = 'none';
+  }
+
   @override
   void initState() {
     SplashScreen.userRef.document(widget.uid).get().then((user) {
@@ -341,6 +480,7 @@ class _UserProfileState extends State<UserProfile> {
             user.data['image'],
             user.data['uid']);
       });
+      setFriendStatus();
     }).catchError((error) {
       showAlertError(error.toString(), context);
     });

@@ -27,8 +27,10 @@ class CustomIcons {
   static const IconData thumbs_up = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData thumbs_down = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData share_bold = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData send_request = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData my_timeline = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData tmeline = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData friends = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData send_request = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData friends_1 = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData request_waiting = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
