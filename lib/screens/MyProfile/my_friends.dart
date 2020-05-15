@@ -50,8 +50,6 @@ class _MyFriendsState extends State<MyFriends> {
             return ListView.builder(
                 itemCount: friends.length,
                 itemBuilder: (ctx, index) {
-                  print(snapshot.data.documents[index].data[friends[index]]
-                      ['name']);
                   var file = snapshot.data.documents[index];
                   return ListTile(
                       leading: CircleAvatar(
