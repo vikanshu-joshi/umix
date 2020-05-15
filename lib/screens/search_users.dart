@@ -257,7 +257,7 @@ class _SearchUsersState extends State<SearchUsers> {
                         LineIcons.search,
                         color: Colors.black,
                       ),
-                      onPressed: () => handleSearch(_search.text)),
+                      onPressed: null),
                   Expanded(
                       child: TextField(
                     controller: _search,

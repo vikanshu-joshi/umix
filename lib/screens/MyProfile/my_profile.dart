@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/custom/custom_icons_icons.dart';
+import 'package:umix/screens/MyProfile/my_friends.dart';
+import 'package:umix/screens/MyProfile/my_requests.dart';
 import 'package:umix/screens/MyProfile/my_timeline.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:umix/widgets/common_widgets.dart';
@@ -373,7 +375,13 @@ class _MyProfileState extends State<MyProfile> {
                       Icons.image,
                       color: Colors.black,
                     ),
-                    onPressed: () => changeMyDP(context))
+                    onPressed: () {
+                      if (SplashScreen.mUser.isEmailVerified) {
+                        changeMyDP(context);
+                      } else {
+                        showAlertError("You need to verify email first", context);
+                      }
+                    })
               ],
               expandedHeight: mediaQuery.height * 0.4,
               floating: false,
@@ -458,6 +466,13 @@ class _MyProfileState extends State<MyProfile> {
                                 )),
                           ),
                           GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  fullscreenDialog: true,
+                                  builder: (ctx) {
+                                    return MyFriends();
+                                  }));
+                            },
                             child: Card(
                                 elevation: 5.0,
                                 shape: RoundedRectangleBorder(
@@ -476,6 +491,13 @@ class _MyProfileState extends State<MyProfile> {
                                 )),
                           ),
                           GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  fullscreenDialog: true,
+                                  builder: (ctx) {
+                                    return MyRequests();
+                                  }));
+                            },
                             child: Card(
                                 elevation: 5.0,
                                 shape: RoundedRectangleBorder(
