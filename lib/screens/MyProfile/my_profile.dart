@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/custom/custom_icons_icons.dart';
-import 'package:umix/screens/my_timeline.dart';
+import 'package:umix/screens/MyProfile/my_timeline.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:umix/widgets/common_widgets.dart';
 
@@ -335,9 +335,11 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void viewMyPosts() {
-    Navigator.of(context).push(MaterialPageRoute(fullscreenDialog: true,builder: (ctx) {
-      return MyTimeLine(SplashScreen.myProfile.uid);
-    }));
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) {
+          return MyTimeLine(SplashScreen.myProfile.uid);
+        }));
   }
 
   @override
@@ -455,36 +457,42 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                 )),
                           ),
-                          Card(
-                              elevation: 5.0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(CustomIcons.friends),
-                                    Text('Friends')
-                                  ],
-                                ),
-                              )),
-                          Card(
-                              elevation: 5.0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(CustomIcons.send_request),
-                                    Text('Requests')
-                                  ],
-                                ),
-                              )),
+                          GestureDetector(
+                            child: Card(
+                                elevation: 5.0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(CustomIcons.friends),
+                                      Text('Friends')
+                                    ],
+                                  ),
+                                )),
+                          ),
+                          GestureDetector(
+                            child: Card(
+                                elevation: 5.0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(CustomIcons.send_request),
+                                      Text('Requests')
+                                    ],
+                                  ),
+                                )),
+                          ),
                         ],
                       ),
                       ListTile(

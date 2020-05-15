@@ -30,7 +30,11 @@ class _UserProfileState extends State<UserProfile> {
     String pid = snapshot.data['id'].toString();
     String owner = snapshot.data['owner'].toString();
     if (likes.length == 0 || !likes.containsKey(myID)) {
-      likes[myID] = DateTime.now().millisecondsSinceEpoch.toString();
+      likes[myID] = {
+        'name': SplashScreen.myProfile.name,
+        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+        'id' : myID
+      };
     } else {
       likes.remove(myID);
     }
@@ -46,7 +50,11 @@ class _UserProfileState extends State<UserProfile> {
     String pid = snapshot.data['id'].toString();
     String owner = snapshot.data['owner'].toString();
     if (dislikes.length == 0 || !dislikes.containsKey(myID)) {
-      dislikes[myID] = DateTime.now().millisecondsSinceEpoch.toString();
+      dislikes[myID] = {
+        'name': SplashScreen.myProfile.name,
+        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+        'id' : myID
+      };
     } else {
       dislikes.remove(myID);
     }
@@ -106,8 +114,16 @@ class _UserProfileState extends State<UserProfile> {
         isFriend = 'none';
       });
     } else if (isFriend == 'respond') {
-      users.document(SplashScreen.myProfile.uid).collection('requests').document(sendingTO).delete();
-      users.document(_currentUser.uid).collection('requested').document(sendingFROM).delete();
+      users
+          .document(SplashScreen.myProfile.uid)
+          .collection('requests')
+          .document(sendingTO)
+          .delete();
+      users
+          .document(_currentUser.uid)
+          .collection('requested')
+          .document(sendingFROM)
+          .delete();
       CollectionReference myRefFriends =
           users.document(sendingFROM).collection('friends');
       CollectionReference otherRefFriends =
@@ -178,7 +194,7 @@ class _UserProfileState extends State<UserProfile> {
       children: <Widget>[
         isFriend == 'respond'
             ? Container(
-              padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: ListTile(
                   title: Text('Want To Accept Request ?'),
                   trailing: IconButton(

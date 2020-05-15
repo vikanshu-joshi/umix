@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:umix/models/data.dart';
+import 'package:umix/screens/MyProfile/likes_dislikes.dart';
+import 'package:umix/screens/MyProfile/my_comments.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'dart:ui';
 import 'package:umix/custom/custom_icons_icons.dart';
@@ -15,6 +18,68 @@ class MyTimeLine extends StatefulWidget {
 }
 
 class _MyTimeLineState extends State<MyTimeLine> {
+  void showAllLikes(var ds) {
+    var data = ds[0].data;
+    Post post = Post(
+        data['id'],
+        data['caption'],
+        data['image'],
+        data['location'],
+        data['owner'],
+        data['likes'],
+        data['dislikes'],
+        int.parse(data['timestamp'].toString()),
+        data['comments']);
+    if (post.likes.length != 0) {
+      Navigator.of(context).push(MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (ctx) {
+            return LikesDislikes('likes', post);
+          }));
+    }
+  }
+
+  void showAllDisLikes(var ds) {
+    var data = ds[0].data;
+    Post post = Post(
+        data['id'],
+        data['caption'],
+        data['image'],
+        data['location'],
+        data['owner'],
+        data['likes'],
+        data['dislikes'],
+        int.parse(data['timestamp'].toString()),
+        data['comments']);
+    if (post.likes.length != 0) {
+      Navigator.of(context).push(MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (ctx) {
+            return LikesDislikes('dislikes', post);
+          }));
+    }
+  }
+
+  void showAllComments(var ds) {
+    var data = ds[0].data;
+    Post post = Post(
+        data['id'],
+        data['caption'],
+        data['image'],
+        data['location'],
+        data['owner'],
+        data['likes'],
+        data['dislikes'],
+        int.parse(data['timestamp'].toString()),
+        data['comments']);
+    if (post.comments.length != 0) {
+      Navigator.of(context).push(MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (ctx) {
+            return MyComments(post);
+          }));
+    }
+  }
 
   Widget getAppBar() {
     return Device.get().isIos
@@ -87,7 +152,8 @@ class _MyTimeLineState extends State<MyTimeLine> {
                                       hoverColor: Colors.transparent,
                                       focusColor: Colors.transparent,
                                       splashColor: Colors.transparent,
-                                      onPressed: () {},
+                                      onPressed: () =>
+                                          showAllLikes(snapshot.data.documents),
                                       icon: Icon(
                                         snapshot.data.documents[index]
                                                 .data['likes']
@@ -109,7 +175,8 @@ class _MyTimeLineState extends State<MyTimeLine> {
                                       hoverColor: Colors.transparent,
                                       focusColor: Colors.transparent,
                                       splashColor: Colors.transparent,
-                                      onPressed: () {},
+                                      onPressed: () => showAllDisLikes(
+                                          snapshot.data.documents),
                                       icon: Icon(
                                         snapshot.data.documents[index]
                                                 .data['dislikes']
@@ -131,7 +198,7 @@ class _MyTimeLineState extends State<MyTimeLine> {
                                       hoverColor: Colors.transparent,
                                       focusColor: Colors.transparent,
                                       splashColor: Colors.transparent,
-                                      onPressed: () {},
+                                      onPressed: () => showAllComments(snapshot.data.documents),
                                       icon: Icon(CustomIcons.comment),
                                       label: Text(snapshot.data.documents[index]
                                           .data['comments'].length
