@@ -222,7 +222,7 @@ class _SearchUsersState extends State<SearchUsers> {
                                 contentPadding: EdgeInsets.all(10),
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.black,
-                                  radius: 31,
+                                  radius: 33,
                                   child: CircleAvatar(
                                     radius: 30,
                                     backgroundImage:

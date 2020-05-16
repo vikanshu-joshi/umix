@@ -101,10 +101,10 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
         null,
         location.isEmpty ? null : location,
         SplashScreen.mUser.uid,
-        new LinkedHashMap<dynamic,dynamic>(),
-        new LinkedHashMap<dynamic,dynamic>(),
+        new LinkedHashMap<dynamic, dynamic>(),
+        new LinkedHashMap<dynamic, dynamic>(),
         0,
-        new LinkedHashMap<dynamic,LinkedHashMap<dynamic,dynamic>>(),
+        new LinkedHashMap<dynamic, LinkedHashMap<dynamic, dynamic>>(),
       );
       if (widget.image != null) {
         var upload =
@@ -134,25 +134,16 @@ class _FinalPostUploadState extends State<FinalPostUpload> {
       'caption': _post.caption,
       'image': _post.image,
       'owner': _post.owner,
+      'ownerName': SplashScreen.myProfile.name,
+      'ownerImage': SplashScreen.myProfile.image,
       'likes': _post.likes,
       'dislikes': _post.dislikes,
       'comments': _post.comments,
       'location': _post.location,
       'timestamp': DateTime.now().millisecondsSinceEpoch
     }).then((_) {
-      Map<String, String> p = {_post.id: _post.id};
-      SplashScreen.userRef
-          .document(SplashScreen.mUser.uid)
-          .collection('other')
-          .document('posts')
-          .setData(p)
-          .then((_) {
-        _progressDialog.hide();
-        Navigator.of(context).pop(true);
-      }).catchError((error) {
-        _progressDialog.hide();
-        showAlertError(error.message, context);
-      });
+      _progressDialog.hide();
+      Navigator.of(context).pop(true);
     }).catchError((error) {
       _progressDialog.hide();
       showAlertError(error.message, context);

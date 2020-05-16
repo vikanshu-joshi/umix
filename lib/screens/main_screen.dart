@@ -12,6 +12,7 @@ import 'package:umix/screens/chat_screen.dart';
 import 'package:umix/screens/new_post_screen.dart';
 import 'package:umix/screens/search_users.dart';
 import 'package:umix/screens/splash_screen.dart';
+import 'package:umix/screens/timeline_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const route = 'main';
@@ -37,11 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         });
       },
       children: <Widget>[
-        Center(
-            child: Text(
-          '1',
-          style: TextStyle(color: Colors.black),
-        )),
+        TimeLine(),
         Center(
             child: ChatScreen()),
         NewPost(),
