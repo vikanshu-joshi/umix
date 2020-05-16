@@ -83,6 +83,18 @@ class _CreateAccountState extends State<CreateAccount> {
         await SplashScreen.userRef
             .document(SplashScreen.mUser.uid)
             .setData(data);
+        await Firestore.instance
+            .collection('chats')
+            .document(SplashScreen.mUser.uid)
+            .setData({
+          SplashScreen.mUser.uid: {
+            'latest': null,
+            'message': null,
+            'id': null,
+            'image': null,
+            'name': null
+          }
+        });
         Device.get().isIos
             ? Navigator.of(context).pop()
             : await _progressDialog.hide();

@@ -174,7 +174,7 @@ class _UserProfileState extends State<UserProfile> {
                         : isFriend == 'waiting'
                             ? CustomIcons.request_waiting
                             : isFriend == 'friend'
-                                ? CustomIcons.friends_1
+                                ? CustomIcons.friends
                                 : CustomIcons.send_request,
                     color: isFriend == 'none'
                         ? Colors.white

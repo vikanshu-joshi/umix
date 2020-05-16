@@ -8,6 +8,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:umix/custom/custom_icons_icons.dart';
 import 'package:umix/screens/MyProfile/my_profile.dart';
+import 'package:umix/screens/chat_screen.dart';
 import 'package:umix/screens/new_post_screen.dart';
 import 'package:umix/screens/search_users.dart';
 import 'package:umix/screens/splash_screen.dart';
@@ -42,10 +43,7 @@ class _MainScreenState extends State<MainScreen> {
           style: TextStyle(color: Colors.black),
         )),
         Center(
-            child: Text(
-          '2',
-          style: TextStyle(color: Colors.black),
-        )),
+            child: ChatScreen()),
         NewPost(),
         SearchUsers(),
         MyProfile(),

@@ -29,8 +29,11 @@ class CustomIcons {
   static const IconData share_bold = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData my_timeline = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData tmeline = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData friends = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData friends_hands = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData send_request = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData friends_1 = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData friends = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData request_waiting = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData send = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData new_chat_hand_bold = IconData(0xe819, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData send_message_phone = IconData(0xe81a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:umix/custom/custom_icons_icons.dart';
+import 'package:umix/models/data.dart';
 import 'package:umix/screens/MyProfile/my_friends.dart';
 import 'package:umix/screens/MyProfile/my_requests.dart';
 import 'package:umix/screens/MyProfile/my_timeline.dart';
@@ -330,10 +331,9 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void logOut(BuildContext context) {
-    SplashScreen.mAuth.signOut().then((_) {
-      Navigator.of(context).pushReplacementNamed(SplashScreen.route);
-      SplashScreen.mUser = null;
-    });
+    Navigator.of(context).pushReplacementNamed(SplashScreen.route);
+    SplashScreen.mAuth.signOut();SplashScreen.mUser = null;
+    SplashScreen.myProfile = User('', '', '', '', '', '');
   }
 
   void viewMyPosts() {
@@ -379,7 +379,8 @@ class _MyProfileState extends State<MyProfile> {
                       if (SplashScreen.mUser.isEmailVerified) {
                         changeMyDP(context);
                       } else {
-                        showAlertError("You need to verify email first", context);
+                        showAlertError(
+                            "You need to verify email first", context);
                       }
                     })
               ],
@@ -484,7 +485,7 @@ class _MyProfileState extends State<MyProfile> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
-                                      Icon(CustomIcons.friends),
+                                      Icon(CustomIcons.friends_hands),
                                       Text('Friends')
                                     ],
                                   ),
