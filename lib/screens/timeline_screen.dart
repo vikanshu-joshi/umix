@@ -94,6 +94,11 @@ class _TimeLineState extends State<TimeLine> {
         children: <Widget>[
           Container(
             child: ListTile(
+              subtitle: Text(
+                timeago.format(DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(data['timestamp'].toString()))),
+                style: TextStyle(color: Colors.black),
+              ),
               contentPadding: const EdgeInsets.all(10),
               leading: CircleAvatar(
                 backgroundColor: Colors.black,
@@ -181,9 +186,20 @@ class _TimeLineState extends State<TimeLine> {
                 )
               : Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(
-                    data['caption'].toString(),
-                    style: TextStyle(color: Colors.black),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          margin: const EdgeInsets.only(left: 5, right: 10),
+                          child: Icon(
+                            Icons.closed_caption,
+                            color: Colors.black.withOpacity(0.5),
+                            size: 22,
+                          )),
+                      Text(
+                        data['caption'].toString(),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
                   ),
                 ),
           data['location'].toString() == 'null'
@@ -192,19 +208,24 @@ class _TimeLineState extends State<TimeLine> {
                 )
               : Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(
-                    data['location'].toString(),
-                    style: TextStyle(color: Colors.black),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                          margin: const EdgeInsets.only(left: 5, right: 10),
+                          child: Icon(
+                            Icons.location_on,
+                            color: Colors.black.withOpacity(0.5),
+                            size: 22,
+                          )),
+                      Text(
+                        data['location'].toString(),
+                        style: TextStyle(color: Colors.black),
+                      )
+                    ],
                   ),
                 ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            child: Text(
-              timeago.format(DateTime.fromMillisecondsSinceEpoch(
-                  int.parse(data['timestamp'].toString()))),
-              style: TextStyle(color: Colors.black),
-            ),
-          )
         ],
       ),
     );
@@ -213,6 +234,7 @@ class _TimeLineState extends State<TimeLine> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: StreamBuilder(
           stream: Firestore.instance
               .collection('users')

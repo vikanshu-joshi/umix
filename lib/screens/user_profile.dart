@@ -33,7 +33,7 @@ class _UserProfileState extends State<UserProfile> {
       likes[myID] = {
         'name': SplashScreen.myProfile.name,
         'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-        'id' : myID
+        'id': myID
       };
     } else {
       likes.remove(myID);
@@ -53,7 +53,7 @@ class _UserProfileState extends State<UserProfile> {
       dislikes[myID] = {
         'name': SplashScreen.myProfile.name,
         'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-        'id' : myID
+        'id': myID
       };
     } else {
       dislikes.remove(myID);
@@ -396,12 +396,25 @@ class _UserProfileState extends State<UserProfile> {
                                         )
                                       : Container(
                                           padding: const EdgeInsets.all(10),
-                                          child: Text(
-                                            snapshot.data.documents[index]
-                                                .data['caption']
-                                                .toString(),
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 5, right: 10),
+                                                  child: Icon(
+                                                    Icons.closed_caption,
+                                                    color: Colors.black
+                                                        .withOpacity(0.5),
+                                                    size: 22,
+                                                  )),
+                                              Text(
+                                                snapshot.data.documents[index]
+                                                    .data['caption']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                   snapshot.data.documents[index]
@@ -413,25 +426,51 @@ class _UserProfileState extends State<UserProfile> {
                                         )
                                       : Container(
                                           padding: const EdgeInsets.all(10),
-                                          child: Text(
-                                            snapshot.data.documents[index]
-                                                .data['location']
-                                                .toString(),
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 5, right: 10),
+                                                  child: Icon(
+                                                    Icons.location_on,
+                                                    color: Colors.black
+                                                        .withOpacity(0.5),
+                                                    size: 22,
+                                                  )),
+                                              Text(
+                                                snapshot.data.documents[index]
+                                                    .data['location']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                   Container(
                                     padding: const EdgeInsets.all(10),
-                                    child: Text(
-                                      timeago.format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              int.parse(snapshot
-                                                  .data
-                                                  .documents[index]
-                                                  .data['timestamp']
-                                                  .toString()))),
-                                      style: TextStyle(color: Colors.black),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                            margin: const EdgeInsets.only(
+                                                left: 5, right: 10),
+                                            child: Icon(
+                                              Icons.access_alarm,
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              size: 22,
+                                            )),
+                                        Text(
+                                          timeago.format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  int.parse(snapshot
+                                                      .data
+                                                      .documents[index]
+                                                      .data['timestamp']
+                                                      .toString()))),
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
                                     ),
                                   )
                                 ],
