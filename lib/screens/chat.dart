@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:intl/intl.dart';
 import 'package:umix/custom/custom_icons_icons.dart';
+import 'package:umix/screens/main_screen.dart';
 import 'package:umix/screens/splash_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Chat extends StatefulWidget {
+  static const route = 'chat';
   final String name;
   final String image;
   final String id;
@@ -26,6 +28,7 @@ class _ChatState extends State<Chat> {
 
   @override
   void initState() {
+    MainScreen.screen = 'chat';
     chats = Firestore.instance.collection('chats');
     _message = TextEditingController();
     super.initState();
@@ -33,6 +36,7 @@ class _ChatState extends State<Chat> {
 
   @override
   void dispose() {
+    MainScreen.screen = 'not chat';
     _message.dispose();
     super.dispose();
   }
@@ -46,19 +50,7 @@ class _ChatState extends State<Chat> {
     var id = Uuid().v4().toString();
     var time = DateTime.now().millisecondsSinceEpoch;
     var t = FieldValue.serverTimestamp();
-    await chats
-        .document(widget.id)
-        .collection(SplashScreen.myProfile.uid)
-        .document(id)
-        .setData({
-      'id': id,
-      'message': message,
-      'type': type,
-      'timestamp': t,
-      'time': time,
-      'owner': 'me'
-    });
-    await chats
+    chats
         .document(SplashScreen.myProfile.uid)
         .collection(widget.id)
         .document(id)
@@ -69,6 +61,18 @@ class _ChatState extends State<Chat> {
       'timestamp': t,
       'time': time,
       'owner': 'user',
+    });
+    chats
+        .document(widget.id)
+        .collection(SplashScreen.myProfile.uid)
+        .document(id)
+        .setData({
+      'id': id,
+      'message': message,
+      'type': type,
+      'timestamp': t,
+      'time': time,
+      'owner': 'me'
     });
     chats.document(widget.id).updateData({
       SplashScreen.myProfile.uid: {
@@ -87,6 +91,18 @@ class _ChatState extends State<Chat> {
         'image': widget.image,
         'name': widget.name
       }
+    });
+    String notificationId = Uuid().v4().toString();
+    Firestore.instance
+        .collection('users')
+        .document(widget.id)
+        .collection('notifications')
+        .document(notificationId)
+        .setData({
+      'type' : 'text',
+      'data' : message,
+      'name' : widget.name,
+      'id' : SplashScreen.mUser.uid,
     });
   }
 

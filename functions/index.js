@@ -83,3 +83,37 @@ exports.onPostUpdated = functions.firestore
                 });
         });
     });
+
+
+exports.newNotification = functions.firestore
+    .document("/users/{userId}/notifications/{notificationId}")
+    .onCreate(async (snap, context) => {
+        const userId = context.params.userId;
+        const notificationId = context.params.notificationId;
+        const userRef = admin.firestore().doc(`/users/${userId}`);
+        const doc = await userRef.get();
+        const androidNotificationToken = doc.data().androidNotificationToken;
+
+        if (androidNotificationToken) {
+             const data = snap.data();
+             var body = `${data.name} sent you a new message`;
+             const message = {
+                "notification": { "body" : "","title" : body },
+                "token": androidNotificationToken,
+                "data": {
+                    "id": `${data.id}`,
+                    "image": `${data.image}`,
+                    "data": `${data.data}`,
+                    "name": `${data.name}`,
+                    "type": `${data.type}`,
+                }
+             };
+             admin.messaging().send(message).then(onvalue => {
+                console.log("Sent notification",onvalue);
+             }).catch(error => {
+                console.log("error sending notification",error);
+             });
+        } else {
+            console.log("No token for user");
+        }
+    });

@@ -84,7 +84,6 @@ class _TimeLineState extends State<TimeLine> {
   }
 
   Widget getPostWidget(LinkedHashMap<String, dynamic> data) {
-    print(data);
     return Card(
       elevation: 1.0,
       shape: Border.all(width: 1.0, color: Colors.black),

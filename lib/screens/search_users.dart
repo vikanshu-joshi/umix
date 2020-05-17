@@ -262,6 +262,7 @@ class _SearchUsersState extends State<SearchUsers> {
                       child: TextField(
                     controller: _search,
                     maxLines: 1,
+                    textCapitalization: TextCapitalization.words,
                     onSubmitted: handleSearch,
                     cursorColor: Colors.black,
                     keyboardType: TextInputType.text,
