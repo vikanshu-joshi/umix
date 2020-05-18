@@ -132,19 +132,17 @@ class _SignInState extends State<SignIn> {
     _progressDialog.show();
     try {
       AuthResult result = await SplashScreen.mAuth
-          .signInWithEmailAndPassword(email: email, password: pass);
+          .signInWithEmailAndPassword(email: email.trim(), password: pass);
       SplashScreen.mUser = result.user;
       _progressDialog.hide();
       Navigator.of(context).pushReplacementNamed(SplashScreen.route);
     } catch (error) {
       if (Device.get().isAndroid) {
-        _progressDialog.hide().then((_) {
-          showAlertError(error.message, context);
-        });
+        _progressDialog.hide();
+        showAlertError(error.message, context);
       } else if (Device.get().isIos) {
-        _progressDialog.hide().then((_) {
-          showAlertError(error.code, context);
-        });
+        _progressDialog.hide();
+        showAlertError(error.code, context);
       }
     }
   }

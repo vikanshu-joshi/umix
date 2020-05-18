@@ -50,9 +50,9 @@ class _ChatScreenState extends State<ChatScreen> {
             radius: 30,
             child: CircleAvatar(
               radius: 27,
-              backgroundImage: map[key]['image'] == 'default'
+              backgroundImage: map[key]['image'].toString() == 'default'
                   ? AssetImage('assets/images/default.png')
-                  : NetworkImage(map[key]['image']),
+                  : NetworkImage(map[key]['image'].toString()),
             ),
           ),
           title: Text(map[key]['name'].toString()),
@@ -65,6 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: Column(
         children: <Widget>[
