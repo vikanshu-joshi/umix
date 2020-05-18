@@ -8,24 +8,24 @@ iOS screenshots not there, I don't have a mac :pensive: :pensive:.
 
 ## Application Video Link :- 
 
-<a href="https://drive.google.com/open?id=1OvzAV_xI5_kjjQLHT4rAzzL9CzgTqO9I4" target="_blank">Click here to play the video</a>
+<a href="https://drive.google.com/open?id=1OvzAV_xI5_kjjQLHT4rAzzL9CzgTqO9I" target="_blank">Click here to play the video</a>
 
 ## Screenshots Android :-
 
 <p align="center">
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/1.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/2.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/3.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/4.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/5.gif" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/6.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/7.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/8.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/9.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/10.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/11.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/12.png" width="360" height="640"/>
-  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/13.png" width="360" height="640"/>
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/1.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/2.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/3.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/4.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/5.gif" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/6.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/7.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/8.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/9.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/10.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/11.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/12.png" width="360" height="640"/>    
+  <img src="https://github.com/vikanshu-joshi/umix/blob/master/screenshots/13.png" width="360" height="640"/>    
 </p>
 
 ## LICENSE
